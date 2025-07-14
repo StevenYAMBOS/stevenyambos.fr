@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"fmt"
@@ -6,55 +6,37 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
 	gomail "gopkg.in/mail.v2"
 )
 
-// Variables d'environnement
-type Config struct {
-	Port         string `env:"PORT" envDefault:"3000"`
-	SmtpUsername string `env:"SMTP_USERNAME"`
-	SmtpHost     string `env:"SMTP_HOST"`
-	SmtpPort     string `env:"SMTP_PORT" envDefault:"587"`
-	SmtpPassword string `env:"SMTP_PASSWORD"`
-}
-
-// Modèle du formulaire de contact
-type Contact struct {
-	Object     string `json:"object"`
-	Email      string `json:"email"`
-	Message    string `json:"message"`
-	Attachment string `json:"attachment"`
-}
-
 // Route de test
-func homePage(writer http.ResponseWriter, request *http.Request) {
+func HomePage(writer http.ResponseWriter, request *http.Request) {
 	tmpl := template.Must(template.ParseFiles("./templates/home.html"))
-
 	tmpl.Execute(writer, nil)
 
 	writer.WriteHeader(http.StatusOK)
 }
 
 // Page de contact
-func contactPage(writer http.ResponseWriter, request *http.Request) {
+func ContactPage(writer http.ResponseWriter, request *http.Request) {
 	tmpl := template.Must(template.ParseFiles("./templates/contact.html"))
-	tmpl.Execute(writer, nil)
+	tmpl.Execute(writer, struct{ Success bool }{false})
 
 	writer.WriteHeader(http.StatusOK)
 }
 
 // Envoyer le formulaire
-func sendContactForm(writer http.ResponseWriter, request *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./templates/contact.html"))
+func SendContactForm(writer http.ResponseWriter, request *http.Request) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Erreur lors du chargement du fichier .env")
+	}
 
-	// Variables d'environnement
-	cfg := Config{}
-	if err := env.Parse(&cfg); err != nil {
-		log.Printf("Erreur lors du parsing des variables d'environnement: %v", err)
-		http.Error(writer, "Erreur de configuration", http.StatusInternalServerError)
-		return
+	if request.Method != http.MethodPost {
+		http.Error(writer, "Méthode non autorisée", http.StatusMethodNotAllowed)
 	}
 
 	// Limite de taille de 100 MB (pour limiter les abus)
@@ -82,10 +64,25 @@ func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 
 	// Headers de l'email
 	m.SetHeader("From", email)
-	m.SetHeader("To", cfg.SmtpUsername)
+	m.SetHeader("To", os.Getenv("SMTP_USERNAME"))
 	m.SetHeader("Subject", object)
-	// Set email body
-	m.SetBody("text/html", message)
+	// Corps du mail
+	/*
+	 * GMAIL semble bloquer l'email de l'expéditeur, j'ai un peu tricher pour l'ajouter dans le body, ça passe donc c'est cool
+	 */
+	htmlBody := fmt.Sprintf(`
+		<h2>Nouveau message de contact depuis le portfolio</h2>
+		<p><strong>Email de l'expéditeur:</strong> %s</p>
+		<p><strong>Objet:</strong> %s</p>
+		<hr>
+		<div style="margin-top: 20px;">
+			%s
+		</div>
+		<hr>
+		<p><em>Message reçu depuis stevenyambos.fr</em></p>
+	`, email, object, message)
+
+	m.SetBody("text/html", htmlBody)
 
 	// Récupérer le fichier depuis les données du formulaire (optionnel)
 	file, fileHeader, err := request.FormFile("attachment")
@@ -113,9 +110,9 @@ func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 		log.Printf("Aucun fichier joint ou erreur: %v", err)
 	}
 
-	dialer := gomail.NewDialer(cfg.SmtpHost, 587, cfg.SmtpUsername, cfg.SmtpPassword)
+	dialer := gomail.NewDialer(os.Getenv("SMTP_HOST"), 587, os.Getenv("SMTP_USERNAME"), os.Getenv("SMTP_PASSWORD"))
 
-	// Send the email
+	// Envoyer l'email
 	if err := dialer.DialAndSend(m); err != nil {
 		log.Printf("Erreur lors de l'envoi de l'email: %v", err)
 		http.Error(writer, "Erreur lors de l'envoi de l'email", http.StatusInternalServerError)
@@ -123,36 +120,9 @@ func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	// Afficher la page de succès
+	tmpl := template.Must(template.ParseFiles("./templates/contact.html"))
 	tmpl.Execute(writer, struct{ Success bool }{true})
 
 	fmt.Println("Email envoyé avec succès !")
-
-	// Message de succès
-	writer.WriteHeader(http.StatusOK)
-	if fileHeader != nil {
-		fmt.Fprintf(writer, "Email envoyé avec succès avec le fichier: %s\n", fileHeader.Filename)
-	} else {
-		fmt.Fprintf(writer, "Email envoyé avec succès\n")
-	}
-}
-
-func main() {
-	cfg := Config{}
-	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("Erreur lors du parsing des variables d'environnement: %+v", err)
-	}
-
-	// Assurer que le port commence par ":"
-	if cfg.Port[0] != ':' {
-		cfg.Port = ":" + cfg.Port
-	}
-
-	router := http.NewServeMux()
-
-	router.HandleFunc("GET /", homePage)
-	router.HandleFunc("GET /contact", contactPage)
-	router.HandleFunc("POST /contact", sendContactForm)
-
-	fmt.Printf("Projet lançé sur le PORT %s\n", cfg.Port)
-	log.Fatal(http.ListenAndServe(cfg.Port, router))
+	fmt.Println("ENVOYER À : ", email)
 }

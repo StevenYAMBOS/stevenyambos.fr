@@ -780,19 +780,6 @@
                     <li>
                         <a href="/"><i class="fas fa-home"></i>Accueil</a>
                     </li>
-                    <!-- <li>
-                        <a href="#about"><i class="fas fa-user"></i>À propos</a>
-                    </li>
-                    <li>
-                        <a href="#projects"
-                            ><i class="fas fa-code"></i>Projets</a
-                        >
-                    </li>
-                    <li>
-                        <a href="#contact"
-                            ><i class="fas fa-envelope"></i>Contact</a
-                        >
-                    </li> -->
                 </ul>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     <i class="fas fa-bars"></i>
@@ -906,7 +893,7 @@
                             id="contactForm"
                             class="contact-form"
                             method="POST"
-                            action="/contact/"
+                            action="/contact-form"
                             enctype="multipart/form-data"
                             novalidate
                         >
@@ -1134,6 +1121,15 @@
                             message =
                                 "Veuillez entrer une adresse email valide.";
                         }
+                        if (field.value.length < 6) {
+                            isValid = false;
+                            message =
+                                "L'email doit contenir au moins 6 caractères.";
+                        } else if (field.value.length > 50) {
+                            isValid = false;
+                            message =
+                                "L'email ne peut pas dépasser 50 caractères.";
+                        }
                     } else if (field.name === "message" && field.value) {
                         if (field.value.length < 10) {
                             isValid = false;
@@ -1197,6 +1193,29 @@
                     });
                 }
 
+                // Reset le formulaire
+                function resetFormValidation() {
+                    // Supprimer toutes les classes de validation
+                    const formGroups = form.querySelectorAll(".form-group");
+                    formGroups.forEach((group) => {
+                        group.classList.remove("error", "success");
+                        const errorMessage =
+                            group.querySelector(".error-message");
+                        if (errorMessage) {
+                            errorMessage.classList.remove("show");
+                        }
+                    });
+                }
+
+                // Reset pièce jointe
+                function resetFileUpload() {
+                    // Reset l'affichage du fichier
+                    fileSelected.classList.remove("show");
+                    fileUpload.style.display = "block";
+                    fileInput.value = "";
+                    fileName.textContent = "";
+                }
+
                 // Soumission du formulaire
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
@@ -1217,14 +1236,35 @@
                     const formData = new FormData(form);
 
                     // Envoyer le formulaire
-                    fetch("/contact/", {
+                    fetch("/contact-form", {
                         method: "POST",
                         body: formData,
                     })
                         .then((response) => {
                             if (response.ok) {
-                                // Redirection ou affichage du succès
-                                window.location.reload();
+                                // Reset le formulaire
+                                form.reset();
+
+                                // Reset les validations visuelles
+                                resetFormValidation();
+
+                                // Reset le compteur de caractères
+                                charCount.textContent = "0";
+                                charCount.style.color = "#999";
+
+                                // Reset l'affichage du fichier
+                                resetFileUpload();
+
+                                // Afficher message de succès
+                                showMessage(
+                                    "Message envoyé avec succès ! Redirection en cours...",
+                                    "success",
+                                );
+
+                                // Redirection vers la page d'accueil après 2 secondes
+                                setTimeout(() => {
+                                    window.location.href = "/";
+                                }, 3000);
                             } else {
                                 throw new Error(
                                     "Erreur lors de l'envoi du message",
