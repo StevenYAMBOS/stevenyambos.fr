@@ -1,31 +1,32 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"os"
 
+	"github.com/caarlos0/env/v11"
 	gomail "gopkg.in/mail.v2"
 )
 
-type uploadedFile struct {
-	Size        int64  `json:"size"`
-	ContentType string `json:"content_type"`
-	Filename    string `json:"filename"`
-	FileContent string `json:"file_content"`
+// Variables d'environnement
+type Config struct {
+	Port         string `env:"PORT"`
+	SmtpUsername string `env:"SMTP_USERNAME"`
+	SmtpHost     string `env:"SMTP_HOST"`
+	SmtpPort     string `env:"SMTP_PORT"`
+	SmtpPassword string `env:"SMTP_PASSWORD"`
 }
 
+// Modèle du formulaire de contact
 type Contact struct {
-	Object     string       `json:"object"`
-	Email      string       `json:"email"`
-	Message    string       `json:"message"`
-	Attachment uploadedFile `json:"attachment"`
+	Object     string `json:"object"`
+	Email      string `json:"email"`
+	Message    string `json:"message"`
+	Attachment string `json:"attachment"`
 }
 
+// Route de test
 func healthCheck(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != "GET" {
 		writer.Header().Set("Allow", "GET")
@@ -45,6 +46,7 @@ func healthCheck(writer http.ResponseWriter, request *http.Request) {
 	writer.Write([]byte("Service en bonne santé"))
 }
 
+// Envoyer le formulaire
 func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != "POST" {
 		writer.Header().Set("Allow", "POST")
@@ -57,85 +59,52 @@ func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err := request.ParseMultipartForm(32 << 10)
-	if err != nil {
-		log.Fatal(err)
+	// Variables d'environnement
+	cfg := Config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatalf("%+v", err)
+	}
+
+	// Limit the size of the incoming request body to prevent abuse (e.g., 100 MB)
+	const maxUploadSize = 100 << 20 // 100 MB
+	request.Body = http.MaxBytesReader(writer, request.Body, maxUploadSize)
+
+	// Parse the multipart form
+	if err := request.ParseMultipartForm(10 << 20); err != nil {
+		http.Error(writer, "Failed to parse multipart form: "+err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	object := request.FormValue("object")
 	email := request.FormValue("email")
 	message := request.FormValue("message")
 
-	var newFile uploadedFile
-
-	for _, fheaders := range request.MultipartForm.File {
-
-		for _, headers := range fheaders {
-			file, err := headers.Open()
-			if err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			defer file.Close()
-
-			// detect contentType
-			buff := make([]byte, 512)
-			file.Read(buff)
-			file.Seek(0, 0)
-			contentType := http.DetectContentType(buff)
-			newFile.ContentType = contentType
-
-			// get file size
-
-			var sizeBuff bytes.Buffer
-			fileSize, err := sizeBuff.ReadFrom(file)
-
-			if err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			file.Seek(0, 0)
-			newFile.Size = fileSize
-			newFile.Filename = headers.Filename
-			contentBuf := bytes.NewBuffer(nil)
-
-			if _, err := io.Copy(contentBuf, file); err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			newFile.FileContent = contentBuf.String()
-
-		}
-
-	}
-	data := make(map[string]interface{})
-
-	data["form_field_value"] = email
-	data["status"] = 200
-	data["file_stats"] = newFile
-
-	if err = json.NewEncoder(writer).Encode(data); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
+	// Retrieve the file from the form data
+	file, fileHeader, err := request.FormFile("attachment")
+	if err != nil {
+		http.Error(writer, "Unable to retrieve file from form: "+err.Error(), http.StatusBadRequest)
 		return
 	}
+	defer file.Close()
+
+	fmt.Printf("Uploaded File: %+v\n", fileHeader.Filename)
+	fmt.Printf("File Size: %+v\n", fileHeader.Size)
+	fmt.Printf("MIME Header: %+v\n", fileHeader.Header)
 
 	// Create a new message
 	m := gomail.NewMessage()
 
 	// Set email headers
 	m.SetHeader("From", email)
-	m.SetHeader("To", os.Getenv("SMTP_USERNAME"))
+	m.SetHeader("To", cfg.SmtpUsername)
 	m.SetHeader("Subject", object)
 	// Set email body
 	m.SetBody("text/html", message)
 	// Add attachments
-	// m.Attach(newFile)
+	m.Attach(fileHeader.Filename)
 
 	// Set up the SMTP dialer
-	dialer := gomail.NewDialer(os.Getenv("SMTP_HOST"), 587, os.Getenv("SMTP_USERNAME"), os.Getenv("SMTP_PASSWORD"))
+	dialer := gomail.NewDialer(cfg.SmtpHost, 587, cfg.SmtpUsername, cfg.SmtpPassword)
 
 	// Send the email
 	if err := dialer.DialAndSend(m); err != nil {
@@ -144,18 +113,15 @@ func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		fmt.Println("Email sent successfully with attachments!")
 	}
-
+	// Respond with a success message
+	writer.WriteHeader(http.StatusOK)
+	fmt.Fprintf(writer, "File uploaded successfully: %s\n", fileHeader.Filename)
 }
 
 func main() {
-	PORT := os.Getenv("PORT")
-	if PORT == "" {
-		PORT = ":8080" // Port par défaut si la variable d'environnement n'est pas définie
-	}
-
-	// Assurez-vous que le port commence par ":"
-	if PORT[0] != ':' {
-		PORT = ":" + PORT
+	cfg := Config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatalf("%+v", err)
 	}
 
 	router := http.NewServeMux()
@@ -163,6 +129,6 @@ func main() {
 	router.HandleFunc("GET /health/", healthCheck)
 	router.HandleFunc("POST /contact/", sendContactForm)
 
-	fmt.Printf("Projet lançé sur le PORT %s\n", PORT)
-	log.Fatal(http.ListenAndServe(PORT, router))
+	fmt.Printf("Projet lançé sur le PORT %s\n", cfg.Port)
+	log.Fatal(http.ListenAndServe(cfg.Port, router))
 }
