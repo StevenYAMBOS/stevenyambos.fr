@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"io"
 	"log"
 	"net/http"
 
@@ -11,10 +13,10 @@ import (
 
 // Variables d'environnement
 type Config struct {
-	Port         string `env:"PORT"`
+	Port         string `env:"PORT" envDefault:"3000"`
 	SmtpUsername string `env:"SMTP_USERNAME"`
 	SmtpHost     string `env:"SMTP_HOST"`
-	SmtpPort     string `env:"SMTP_PORT"`
+	SmtpPort     string `env:"SMTP_PORT" envDefault:"587"`
 	SmtpPassword string `env:"SMTP_PASSWORD"`
 }
 
@@ -27,50 +29,40 @@ type Contact struct {
 }
 
 // Route de test
-func healthCheck(writer http.ResponseWriter, request *http.Request) {
-	if request.Method != "GET" {
-		writer.Header().Set("Allow", "GET")
-		http.Error(
-			writer,
-			"Cette méthode n'est pas autorisée !",
-			http.StatusMethodNotAllowed,
-		)
-		return
-	}
+func homePage(writer http.ResponseWriter, request *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./templates/home.html"))
 
-	fmt.Println("La route de test fonctionne")
-	log.Print("Route fonctionnelle")
+	tmpl.Execute(writer, nil)
 
-	// Répondre au client
 	writer.WriteHeader(http.StatusOK)
-	writer.Write([]byte("Service en bonne santé"))
+}
+
+// Page de contact
+func contactPage(writer http.ResponseWriter, request *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./templates/contact.html"))
+	tmpl.Execute(writer, nil)
+
+	writer.WriteHeader(http.StatusOK)
 }
 
 // Envoyer le formulaire
 func sendContactForm(writer http.ResponseWriter, request *http.Request) {
-	if request.Method != "POST" {
-		writer.Header().Set("Allow", "POST")
-		http.Error(
-			writer,
-			"Cette méthode n'est pas autorisée !",
-			http.StatusMethodNotAllowed,
-		)
-
-		return
-	}
+	tmpl := template.Must(template.ParseFiles("./templates/contact.html"))
 
 	// Variables d'environnement
 	cfg := Config{}
 	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("%+v", err)
+		log.Printf("Erreur lors du parsing des variables d'environnement: %v", err)
+		http.Error(writer, "Erreur de configuration", http.StatusInternalServerError)
+		return
 	}
 
-	// Limit the size of the incoming request body to prevent abuse (e.g., 100 MB)
+	// Limite de taille de 100 MB (pour limiter les abus)
 	const maxUploadSize = 100 << 20 // 100 MB
 	request.Body = http.MaxBytesReader(writer, request.Body, maxUploadSize)
 
-	// Parse the multipart form
 	if err := request.ParseMultipartForm(10 << 20); err != nil {
+		log.Printf("Erreur lors du parsing du formulaire: %v", err)
 		http.Error(writer, "Failed to parse multipart form: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -79,55 +71,87 @@ func sendContactForm(writer http.ResponseWriter, request *http.Request) {
 	email := request.FormValue("email")
 	message := request.FormValue("message")
 
-	// Retrieve the file from the form data
-	file, fileHeader, err := request.FormFile("attachment")
-	if err != nil {
-		http.Error(writer, "Unable to retrieve file from form: "+err.Error(), http.StatusBadRequest)
+	// Validation des champs requis
+	if object == "" || email == "" || message == "" {
+		http.Error(writer, "Tous les champs sont requis", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
 
-	fmt.Printf("Uploaded File: %+v\n", fileHeader.Filename)
-	fmt.Printf("File Size: %+v\n", fileHeader.Size)
-	fmt.Printf("MIME Header: %+v\n", fileHeader.Header)
-
-	// Create a new message
+	// Nouveau message
 	m := gomail.NewMessage()
 
-	// Set email headers
+	// Headers de l'email
 	m.SetHeader("From", email)
 	m.SetHeader("To", cfg.SmtpUsername)
 	m.SetHeader("Subject", object)
 	// Set email body
 	m.SetBody("text/html", message)
-	// Add attachments
-	m.Attach(fileHeader.Filename)
 
-	// Set up the SMTP dialer
+	// Récupérer le fichier depuis les données du formulaire (optionnel)
+	file, fileHeader, err := request.FormFile("attachment")
+	if err == nil {
+		defer file.Close()
+
+		fmt.Printf("Uploaded File: %+v\n", fileHeader.Filename)
+		fmt.Printf("File Size: %+v\n", fileHeader.Size)
+		fmt.Printf("MIME Header: %+v\n", fileHeader.Header)
+
+		// Lire le contenu du fichier
+		fileContent, err := io.ReadAll(file)
+		if err != nil {
+			log.Printf("Erreur lors de la lecture du fichier: %v", err)
+			http.Error(writer, "Erreur lors de la lecture du fichier", http.StatusInternalServerError)
+			return
+		}
+
+		// Attacher le fichier à l'email
+		m.Attach(fileHeader.Filename, gomail.SetCopyFunc(func(w io.Writer) error {
+			_, err := w.Write(fileContent)
+			return err
+		}))
+	} else {
+		log.Printf("Aucun fichier joint ou erreur: %v", err)
+	}
+
 	dialer := gomail.NewDialer(cfg.SmtpHost, 587, cfg.SmtpUsername, cfg.SmtpPassword)
 
 	// Send the email
 	if err := dialer.DialAndSend(m); err != nil {
-		fmt.Println("Error:", err)
-		panic(err)
-	} else {
-		fmt.Println("Email sent successfully with attachments!")
+		log.Printf("Erreur lors de l'envoi de l'email: %v", err)
+		http.Error(writer, "Erreur lors de l'envoi de l'email", http.StatusInternalServerError)
+		return
 	}
-	// Respond with a success message
+
+	// Afficher la page de succès
+	tmpl.Execute(writer, struct{ Success bool }{true})
+
+	fmt.Println("Email envoyé avec succès !")
+
+	// Message de succès
 	writer.WriteHeader(http.StatusOK)
-	fmt.Fprintf(writer, "File uploaded successfully: %s\n", fileHeader.Filename)
+	if fileHeader != nil {
+		fmt.Fprintf(writer, "Email envoyé avec succès avec le fichier: %s\n", fileHeader.Filename)
+	} else {
+		fmt.Fprintf(writer, "Email envoyé avec succès\n")
+	}
 }
 
 func main() {
 	cfg := Config{}
 	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("%+v", err)
+		log.Fatalf("Erreur lors du parsing des variables d'environnement: %+v", err)
+	}
+
+	// Assurer que le port commence par ":"
+	if cfg.Port[0] != ':' {
+		cfg.Port = ":" + cfg.Port
 	}
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /health/", healthCheck)
-	router.HandleFunc("POST /contact/", sendContactForm)
+	router.HandleFunc("GET /", homePage)
+	router.HandleFunc("GET /contact", contactPage)
+	router.HandleFunc("POST /contact", sendContactForm)
 
 	fmt.Printf("Projet lançé sur le PORT %s\n", cfg.Port)
 	log.Fatal(http.ListenAndServe(cfg.Port, router))

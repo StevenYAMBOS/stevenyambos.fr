@@ -1,0 +1,1349 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Steven YAMBOS - Développeur Back-End</title>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+
+            /* Header amélioré */
+            header {
+                background: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(20px);
+                position: fixed;
+                top: 0;
+                width: 100%;
+                z-index: 1000;
+                transition: all 0.4s ease;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            header.scrolled {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            }
+
+            nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.8rem 0;
+            }
+
+            /* Logo avec image */
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                color: white;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+            .logo-img {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: 3px solid #00d4aa;
+                transition: all 0.3s ease;
+                object-fit: cover;
+            }
+
+            .logo:hover .logo-img {
+                transform: scale(1.1);
+                border-color: #0094d4;
+                box-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+            }
+
+            .logo-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                transition: all 0.3s ease;
+            }
+
+            header.scrolled .logo {
+                color: #333;
+            }
+
+            header.scrolled .logo-text {
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            /* Navigation links stylés */
+            .nav-links {
+                display: flex;
+                margin: 0.8rem 0;
+                list-style: none;
+                gap: 2.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 0.8rem 2rem;
+                border-radius: 50px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            header.scrolled .nav-links {
+                background: rgba(0, 0, 0, 0.05);
+                border-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links li {
+                position: relative;
+            }
+
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.8rem 1.5rem;
+                border-radius: 25px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            header.scrolled .nav-links a {
+                color: #333;
+            }
+
+            .nav-links a i {
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+            }
+
+            .nav-links a::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                transition: all 0.4s ease;
+                z-index: -1;
+                border-radius: 25px;
+            }
+
+            .nav-links a:hover::before,
+            .nav-links a.active::before {
+                left: 0;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(0, 212, 170, 0.3);
+            }
+
+            .nav-links a:hover i,
+            .nav-links a.active i {
+                transform: scale(1.2);
+            }
+
+            /* Menu mobile toggle */
+            .mobile-menu-toggle {
+                display: none;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                border: none;
+                color: white;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .mobile-menu-toggle:hover {
+                transform: scale(1.1);
+                box-shadow: 0 8px 20px rgba(0, 212, 170, 0.4);
+            }
+
+            .mobile-menu-toggle i {
+                font-size: 1.3rem;
+                transition: all 0.3s ease;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 968px) {
+                .nav-links {
+                    position: fixed;
+                    top: 80px;
+                    right: -100%;
+                    flex-direction: column;
+                    width: 300px;
+                    height: calc(100vh - 80px);
+                    background: rgba(0, 0, 0, 0.95);
+                    backdrop-filter: blur(20px);
+                    padding: 2rem;
+                    gap: 1rem;
+                    border-radius: 0;
+                    border: none;
+                    transition: all 0.4s ease;
+                    border-left: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                .nav-links.mobile-open {
+                    right: 0;
+                }
+
+                .nav-links li {
+                    width: 100%;
+                }
+
+                .nav-links a {
+                    width: 100%;
+                    justify-content: flex-start;
+                    padding: 1.2rem 1.5rem;
+                    border-radius: 15px;
+                    font-size: 1.1rem;
+                }
+
+                .mobile-menu-toggle {
+                    display: block;
+                }
+
+                nav {
+                    padding: 1rem 0;
+                }
+
+                .logo-img {
+                    width: 45px;
+                    height: 45px;
+                }
+
+                .logo-text {
+                    font-size: 1.2rem;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .nav-links {
+                    width: 100vw;
+                    right: -100vw;
+                    top: 70px;
+                    height: calc(100vh - 70px);
+                    padding: 1.5rem;
+                    border-left: none;
+                }
+
+                nav {
+                    padding: 0.8rem 0;
+                }
+
+                .logo-img {
+                    width: 40px;
+                    height: 40px;
+                }
+
+                .logo-text {
+                    font-size: 1.1rem;
+                }
+
+                .mobile-menu-toggle {
+                    width: 45px;
+                    height: 45px;
+                }
+            }
+
+            /* Animation de pulsation pour attirer l'attention */
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(0, 212, 170, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(0, 212, 170, 0);
+                }
+            }
+
+            .nav-links a:hover {
+                animation: pulse 1.5s infinite;
+            }
+
+            /* Indicateur actif plus visible */
+            .nav-links a.active::after {
+                content: "";
+                position: absolute;
+                bottom: -5px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 6px;
+                height: 6px;
+                background: #00d4aa;
+                border-radius: 50%;
+                box-shadow: 0 0 10px #00d4aa;
+            }
+
+            /* Hero Section */
+            .hero {
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                color: white;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 1;
+            }
+
+            .hero-content {
+                position: relative;
+                z-index: 2;
+            }
+
+            .hero-avatar {
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                border: 5px solid #00d4aa;
+                margin: 0 auto 2rem;
+                display: block;
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-20px);
+                }
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+                margin-bottom: 1rem;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+                margin-bottom: 2rem;
+                opacity: 0.9;
+            }
+
+            .typing-animation {
+                border-right: 2px solid #00d4aa;
+                padding-right: 5px;
+                animation: blink 1s infinite;
+            }
+
+            @keyframes blink {
+                0%,
+                50% {
+                    border-color: #00d4aa;
+                }
+                51%,
+                100% {
+                    border-color: transparent;
+                }
+            }
+
+            .hero-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                color: white;
+                text-decoration: none;
+                border-radius: 50px;
+                transition: all 0.3s ease;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(0, 212, 170, 0.3);
+            }
+
+            .btn-outline {
+                background: transparent;
+                border: 2px solid #00d4aa;
+            }
+
+            .btn-outline:hover {
+                background: #00d4aa;
+            }
+
+            /* Sections */
+            .section {
+                padding: 100px 0;
+                background: white;
+            }
+
+            .section:nth-child(even) {
+                background: #f8f9fa;
+            }
+
+            .section-title {
+                text-align: center;
+                font-size: 2.5rem;
+                margin-bottom: 3rem;
+                color: #333;
+                position: relative;
+            }
+
+            .section-title::after {
+                content: "";
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 4px;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                border-radius: 2px;
+            }
+
+            /* About Section */
+            .about-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 4rem;
+                align-items: center;
+            }
+
+            .about-text {
+                font-size: 1.1rem;
+                line-height: 1.8;
+                color: #666;
+            }
+
+            .about-text h3 {
+                color: #333;
+                margin-bottom: 1rem;
+                font-size: 1.5rem;
+            }
+
+            .about-text p {
+                margin-bottom: 1.5rem;
+            }
+
+            .highlight {
+                color: #00d4aa;
+                font-weight: 600;
+            }
+
+            .social-links {
+                display: flex;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .social-links a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                color: white;
+                border-radius: 50%;
+                text-decoration: none;
+                font-size: 1.2rem;
+                transition: transform 0.3s ease;
+            }
+
+            .social-links a:hover {
+                transform: translateY(-3px);
+            }
+
+            /* Skills */
+            .skills-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-top: 2rem;
+            }
+
+            .skill-category {
+                background: white;
+                padding: 2rem;
+                border-radius: 15px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+            }
+
+            .skill-category:hover {
+                transform: translateY(-5px);
+            }
+
+            .skill-category h4 {
+                color: #333;
+                margin-bottom: 1rem;
+                font-size: 1.3rem;
+            }
+
+            .skill-icons {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .skill-icon {
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f8f9fa;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+            }
+
+            .skill-icon:hover {
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                transform: scale(1.1);
+            }
+
+            .skill-icon img {
+                width: 40px;
+                height: 40px;
+            }
+
+            /* Projects */
+            .projects-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+            }
+
+            .project-card {
+                background: white;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+            }
+
+            .project-card:hover {
+                transform: translateY(-10px);
+            }
+
+            .project-image {
+                height: 200px;
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 3rem;
+            }
+
+            .project-content {
+                padding: 2rem;
+            }
+
+            .project-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                color: #333;
+            }
+
+            .project-description {
+                color: #666;
+                margin-bottom: 1rem;
+                line-height: 1.6;
+            }
+
+            .project-tech {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .tech-tag {
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .project-links {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .project-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #00d4aa;
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.3s ease;
+            }
+
+            .project-link:hover {
+                color: #0094d4;
+            }
+
+            /* Contact Section */
+            .contact-content {
+                max-width: 600px;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .contact-info {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .contact-item {
+                background: white;
+                padding: 2rem;
+                border-radius: 15px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+            }
+
+            .contact-item:hover {
+                transform: translateY(-5px);
+            }
+
+            .contact-icon {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(45deg, #00d4aa, #0094d4);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+                font-size: 1.5rem;
+            }
+
+            .contact-item h4 {
+                color: #333;
+                margin-bottom: 0.5rem;
+            }
+
+            .contact-item p {
+                color: #666;
+            }
+
+            .contact-item a {
+                color: #00d4aa;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .contact-item a:hover {
+                color: #0094d4;
+            }
+
+            /* Footer */
+            footer {
+                background: #333;
+                color: white;
+                text-align: center;
+                padding: 3rem 0;
+            }
+
+            .footer-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .footer-quote {
+                font-style: italic;
+                font-size: 1.2rem;
+                color: #00d4aa;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .nav-links {
+                    display: none;
+                }
+
+                .hero h1 {
+                    font-size: 2.5rem;
+                }
+
+                .about-content {
+                    grid-template-columns: 1fr;
+                    gap: 2rem;
+                }
+
+                .hero-buttons {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .section-title {
+                    font-size: 2rem;
+                }
+            }
+
+            /* Animations */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .animate-on-scroll {
+                opacity: 0;
+                animation: fadeInUp 0.6s ease forwards;
+            }
+
+            .animate-on-scroll.delay-1 {
+                animation-delay: 0.1s;
+            }
+            .animate-on-scroll.delay-2 {
+                animation-delay: 0.2s;
+            }
+            .animate-on-scroll.delay-3 {
+                animation-delay: 0.3s;
+            }
+        </style>
+    </head>
+
+    <body>
+        <header>
+            <nav class="container">
+                <a href="/" class="logo">
+                    <img
+                        src="https://avatars.githubusercontent.com/u/95619191?v=4"
+                        alt="Steven YAMBOS"
+                        class="logo-img"
+                    />
+                    <span class="logo-text">Steven YAMBOS</span>
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li>
+                        <a href="#home"><i class="fas fa-home"></i>Accueil</a>
+                    </li>
+                    <li>
+                        <a href="#about"><i class="fas fa-user"></i>À propos</a>
+                    </li>
+                    <li>
+                        <a href="#projects"
+                            ><i class="fas fa-code"></i>Projets</a
+                        >
+                    </li>
+                    <li>
+                        <a href="#contact"
+                            ><i class="fas fa-envelope"></i>Contact</a
+                        >
+                    </li>
+                </ul>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </header>
+
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <img
+                    src="https://avatars.githubusercontent.com/u/95619191?v=4"
+                    alt="Steven YAMBOS"
+                    class="hero-avatar"
+                />
+                <h1>Steven YAMBOS</h1>
+                <p class="typing-animation">
+                    Développeur Back-End | Passionné par Go & les architectures
+                    scalables
+                </p>
+                <p>Ouvert à la collaboration | Apprentissage constant</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn">Voir mes projets</a>
+                    <a href="#contact" class="btn btn-outline">Me contacter</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll">À propos de moi</h2>
+                <div class="about-content">
+                    <div class="about-text animate-on-scroll delay-1">
+                        <h3>Développeur Back-End passionné</h3>
+                        <p>
+                            Je suis un développeur Back-End spécialisé en
+                            <span class="highlight">Go (Golang)</span>
+                            avec une solide expérience dans la création
+                            d'applications web scalables et performantes.
+                            Actuellement en recherche d'opportunités, je
+                            développe activement
+                            <span class="highlight">Smash Here</span>, une
+                            plateforme e-sport innovante.
+                        </p>
+                        <p>
+                            Passionné par l'apprentissage constant et les
+                            nouvelles technologies, je m'investis également dans
+                            le développement d'applications CLI et
+                            l'architecture cloud. Mon approche technique
+                            privilégie la performance, la maintenabilité et
+                            l'évolutivité.
+                        </p>
+                        <p>
+                            Quand je ne code pas, vous me trouverez en train de
+                            jouer en compétition e-sport ou d'explorer de
+                            nouvelles technologies. Mon motto :
+                            <span class="highlight">"No risk no fun"</span>
+                        </p>
+
+                        <div class="social-links">
+                            <a
+                                href="https://www.linkedin.com/in/steven-yambos"
+                                target="_blank"
+                                title="LinkedIn"
+                            >
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a
+                                href="https://x.com/StevenYambos"
+                                target="_blank"
+                                title="Twitter"
+                            >
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a
+                                href="https://github.com/stevenyambos"
+                                target="_blank"
+                                title="GitHub"
+                            >
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a
+                                href="https://stackoverflow.com/users/17386694/steven-yambos"
+                                target="_blank"
+                                title="Stack Overflow"
+                            >
+                                <i class="fab fa-stack-overflow"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="skills-grid animate-on-scroll delay-2">
+                        <div class="skill-category">
+                            <h4><i class="fas fa-code"></i> Langages</h4>
+                            <div class="skill-icons">
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"
+                                        alt="Go"
+                                    />
+                                </div>
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"
+                                        alt="Java"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h4><i class="fas fa-cloud"></i> Cloud</h4>
+                            <div class="skill-icons">
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg"
+                                        alt="AWS"
+                                    />
+                                </div>
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/digitalocean/digitalocean-original.svg"
+                                        alt="Digital Ocean"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h4>
+                                <i class="fas fa-database"></i> Bases de données
+                            </h4>
+                            <div class="skill-icons">
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg"
+                                        alt="MongoDB"
+                                    />
+                                </div>
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg"
+                                        alt="PostgreSQL"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h4><i class="fas fa-tools"></i> Outils</h4>
+                            <div class="skill-icons">
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"
+                                        alt="Docker"
+                                    />
+                                </div>
+                                <div class="skill-icon">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"
+                                        alt="Git"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll">
+                    Mes derniers projets
+                </h2>
+                <div class="projects-grid">
+                    <div class="project-card animate-on-scroll delay-1">
+                        <div class="project-image">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">Smash Here</h3>
+                            <p class="project-description">
+                                Plateforme e-sport complète transformant
+                                l'apprentissage des jeux vidéo en parcours
+                                structurés et personnalisés. Communauté active
+                                avec roadmaps customisées.
+                            </p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Go</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">AWS S3</span>
+                                <span class="tech-tag">Vue.js</span>
+                                <span class="tech-tag">TypeScript</span>
+                                <span class="tech-tag">Digital Ocean</span>
+                            </div>
+                            <div class="project-links">
+                                <a
+                                    href="https://smashhere.fr"
+                                    class="project-link"
+                                    target="_blank"
+                                >
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Site web
+                                </a>
+                                <a
+                                    href="https://github.com/StevenYAMBOS/Smash-Here-API"
+                                    class="project-link"
+                                    target="_blank"
+                                >
+                                    <i class="fab fa-github"></i>
+                                    Backend
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card animate-on-scroll delay-3">
+                        <div class="project-image">
+                            <i class="fas fa-terminal"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">GDoc</h3>
+                            <p class="project-description">
+                                Développement d'applications en ligne de
+                                commande en Go pour l'automatisation et la
+                                productivité.
+                            </p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Go</span>
+                                <span class="tech-tag">Cobra</span>
+                                <span class="tech-tag">Docker</span>
+                                <span class="tech-tag">CLI</span>
+                                <span class="tech-tag">Automation</span>
+                            </div>
+                            <div class="project-links">
+                                <a
+                                    href="https://github.com/StevenYAMBOS/GDoc"
+                                    class="project-link"
+                                    target="_blank"
+                                >
+                                    <i class="fab fa-github"></i>
+                                    En cours
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card animate-on-scroll delay-2">
+                        <div class="project-image">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">Portfolio</h3>
+                            <p class="project-description">
+                                API Go robuste pour la gestion des formulaires
+                                de contact avec support des pièces jointes et
+                                envoi d'emails via SMTP. Architecture scalable
+                                et sécurisée.
+                            </p>
+                            <div class="project-tech">
+                                <span class="tech-tag">Go</span>
+                                <span class="tech-tag">Templ</span>
+                                <span class="tech-tag">Docker</span>
+                                <span class="tech-tag">SMTP</span>
+                            </div>
+                            <div class="project-links">
+                                <a
+                                    href="https://smashhere.fr"
+                                    class="project-link"
+                                    target="_blank"
+                                >
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Site web
+                                </a>
+                                <a
+                                    href="https://github.com/StevenYambos/stevenyambos.fr"
+                                    class="project-link"
+                                    target="_blank"
+                                >
+                                    <i class="fab fa-github"></i>
+                                    Dépôt
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll">Contactez-moi</h2>
+                <div class="contact-content">
+                    <p class="animate-on-scroll delay-1">
+                        Je suis actuellement en recherche d'opportunités en tant
+                        que développeur Back-End. N'hésitez pas à me contacter
+                        pour discuter de vos projets ou d'une collaboration !
+                    </p>
+
+                    <div class="contact-info">
+                        <div class="contact-item animate-on-scroll delay-2">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h4>Email</h4>
+                            <p>
+                                <a href="mailto:stevenyambos@gmail.com"
+                                    >stevenyambos@gmail.com</a
+                                >
+                            </p>
+                        </div>
+
+                        <div class="contact-item animate-on-scroll delay-3">
+                            <div class="contact-icon">
+                                <i class="fab fa-linkedin"></i>
+                            </div>
+                            <h4>LinkedIn</h4>
+                            <p>
+                                <a
+                                    href="https://www.linkedin.com/in/steven-yambos"
+                                    target="_blank"
+                                    >steven-yambos</a
+                                >
+                            </p>
+                        </div>
+
+                        <div class="contact-item animate-on-scroll delay-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h4>Site web</h4>
+                            <p>
+                                <a href="https://smashhere.fr" target="_blank"
+                                    >smashhere.fr</a
+                                >
+                            </p>
+                        </div>
+
+                        <div class="contact-item animate-on-scroll delay-4">
+                            <div class="contact-icon">
+                                <i class="fab fa-twitter"></i>
+                            </div>
+                            <h4>X</h4>
+                            <p>
+                                <a
+                                    href="https://x.com/StevenYambos"
+                                    target="_blank"
+                                    >@StevenYambos</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 3rem">
+                        <a
+                            href="/contact"
+                            class="btn animate-on-scroll delay-5"
+                        >
+                            <i class="fas fa-paper-plane"></i>
+                            Formulaire de contact
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-quote">"No risk no fun"</div>
+                    <div>
+                        <p>&copy; 2025 Steven YAMBOS. Tous droits réservés.</p>
+                    </div>
+                    <div class="social-links">
+                        <a
+                            href="https://www.linkedin.com/in/steven-yambos"
+                            target="_blank"
+                        >
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://x.com/StevenYambos" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a
+                            href="https://github.com/stevenyambos"
+                            target="_blank"
+                        >
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Smooth scrolling pour la navigation
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    document
+                        .querySelector(this.getAttribute("href"))
+                        .scrollIntoView({
+                            behavior: "smooth",
+                        });
+                });
+            });
+
+            // Animation d'apparition au scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px",
+            };
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.animation =
+                            entry.target.style.animation ||
+                            "fadeInUp 0.6s ease forwards";
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+                observer.observe(el);
+            });
+
+            // Typing animation
+            const texts = [
+                "Développeur Back-End | Passionné par Go & les architectures scalables",
+                "Golang | Java | Kotlin",
+            ];
+
+            let textIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            const typingElement = document.querySelector(".typing-animation");
+            const typingSpeed = 100;
+            const deletingSpeed = 50;
+            const pauseTime = 2000;
+
+            function typeText() {
+                const currentText = texts[textIndex];
+
+                if (isDeleting) {
+                    typingElement.textContent = currentText.substring(
+                        0,
+                        charIndex - 1,
+                    );
+                    charIndex--;
+                } else {
+                    typingElement.textContent = currentText.substring(
+                        0,
+                        charIndex + 1,
+                    );
+                    charIndex++;
+                }
+
+                if (!isDeleting && charIndex === currentText.length) {
+                    setTimeout(() => {
+                        isDeleting = true;
+                        typeText();
+                    }, pauseTime);
+                    return;
+                }
+
+                if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % texts.length;
+                }
+
+                setTimeout(typeText, isDeleting ? deletingSpeed : typingSpeed);
+            }
+
+            // Démarrer l'animation de frappe
+            setTimeout(typeText, 1000);
+
+            // Header scroll effect amélioré
+            window.addEventListener("scroll", function () {
+                const header = document.querySelector("header");
+                const sections = document.querySelectorAll(".section, .hero");
+                const navLinks = document.querySelectorAll(".nav-links a");
+
+                // Header background change
+                if (window.scrollY > 50) {
+                    header.classList.add("scrolled");
+                } else {
+                    header.classList.remove("scrolled");
+                }
+
+                // Active section highlighting
+                let current = "";
+                sections.forEach((section) => {
+                    const sectionTop = section.offsetTop;
+                    if (window.scrollY >= sectionTop - 200) {
+                        current = section.getAttribute("id");
+                    }
+                });
+
+                navLinks.forEach((link) => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href") === "#" + current) {
+                        link.classList.add("active");
+                    }
+                });
+            });
+
+            // Menu mobile toggle
+            const mobileMenuToggle =
+                document.getElementById("mobileMenuToggle");
+            const navLinks = document.getElementById("navLinks");
+
+            mobileMenuToggle.addEventListener("click", function () {
+                navLinks.classList.toggle("mobile-open");
+
+                // Animation de l'icône hamburger
+                const icon = this.querySelector("i");
+                if (navLinks.classList.contains("mobile-open")) {
+                    icon.classList.remove("fa-bars");
+                    icon.classList.add("fa-times");
+                } else {
+                    icon.classList.remove("fa-times");
+                    icon.classList.add("fa-bars");
+                }
+            });
+
+            // Fermer le menu mobile au clic sur un lien
+            document.querySelectorAll(".nav-links a").forEach((link) => {
+                link.addEventListener("click", function () {
+                    navLinks.classList.remove("mobile-open");
+                    const icon = mobileMenuToggle.querySelector("i");
+                    icon.classList.remove("fa-times");
+                    icon.classList.add("fa-bars");
+                });
+            });
+        </script>
+    </body>
+</html>
