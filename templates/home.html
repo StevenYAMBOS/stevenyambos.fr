@@ -283,6 +283,24 @@
                     width: 45px;
                     height: 45px;
                 }
+
+                .projects-grid {
+                    grid-template-columns: 1fr;
+                    max-width: 100%;
+                    padding: 0 10px;
+                    gap: 1rem;
+                }
+
+                .project-card {
+                    max-width: 100%;
+                    margin: 0 auto;
+                }
+            }
+
+            @media (max-width: 360px) {
+                .projects-grid {
+                    padding: 0 5px;
+                }
             }
 
             /* Animation de pulsation pour attirer l'attention */
@@ -729,7 +747,7 @@
             /* Responsive */
             @media (max-width: 768px) {
                 .nav-links {
-                    display: none;
+                    /* display: none; */
                 }
 
                 .hero h1 {
@@ -748,6 +766,12 @@
 
                 .section-title {
                     font-size: 2rem;
+                }
+
+                .projects-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                    padding: 0 15px;
                 }
             }
 
