@@ -679,7 +679,7 @@
             /* Responsive Design */
             @media (max-width: 768px) {
                 .nav-links {
-                    display: none;
+                    /* display: none; */
                 }
 
                 .contact-container {
@@ -1006,6 +1006,33 @@
                 const removeFileBtn = document.getElementById("removeFile");
                 const messageTextarea = document.getElementById("message");
                 const charCount = document.getElementById("charCount");
+                const mobileMenuToggle =
+                    document.getElementById("mobileMenuToggle");
+                const navLinks = document.getElementById("navLinks");
+
+                mobileMenuToggle.addEventListener("click", function () {
+                    navLinks.classList.toggle("mobile-open");
+
+                    // Animation de l'icône hamburger
+                    const icon = this.querySelector("i");
+                    if (navLinks.classList.contains("mobile-open")) {
+                        icon.classList.remove("fa-bars");
+                        icon.classList.add("fa-times");
+                    } else {
+                        icon.classList.remove("fa-times");
+                        icon.classList.add("fa-bars");
+                    }
+                });
+
+                // Fermer le menu mobile au clic sur un lien
+                document.querySelectorAll(".nav-links a").forEach((link) => {
+                    link.addEventListener("click", function () {
+                        navLinks.classList.remove("mobile-open");
+                        const icon = mobileMenuToggle.querySelector("i");
+                        icon.classList.remove("fa-times");
+                        icon.classList.add("fa-bars");
+                    });
+                });
 
                 // Validation en temps réel
                 const inputs = form.querySelectorAll(
@@ -1069,7 +1096,18 @@
                 removeFileBtn.addEventListener("click", function () {
                     fileInput.value = "";
                     fileSelected.classList.remove("show");
+
+                    // Restaurer l'apparence originale de la zone d'upload
                     fileUpload.style.display = "block";
+                    fileUpload.style.background = "#f8f9fa";
+                    fileUpload.style.borderColor = "#e0e0e0";
+                    fileUpload.querySelector(".file-upload-text").innerHTML =
+                        "<strong>Cliquez pour choisir un fichier</strong> ou glissez-déposez";
+                    fileUpload.querySelector(
+                        ".file-upload-hint",
+                    ).style.display = "block";
+                    fileUpload.querySelector(".file-upload-icon i").className =
+                        "fas fa-cloud-upload-alt";
                 });
 
                 function handleFileSelect(file) {
@@ -1080,12 +1118,28 @@
                             "Le fichier ne peut pas dépasser 100MB.",
                             "error",
                         );
+                        // Reset le fichier si trop gros
+                        fileInput.value = "";
                         return;
                     }
 
+                    // Mettre à jour le nom du fichier
                     fileName.textContent = `${file.name} (${formatFileSize(file.size)})`;
+
+                    // Afficher la prévisualisation
                     fileSelected.classList.add("show");
-                    fileUpload.style.display = "none";
+
+                    // Modifier l'apparence de la zone d'upload sans la cacher complètement
+                    fileUpload.style.display = "block";
+                    fileUpload.style.background = "rgba(0, 212, 170, 0.1)";
+                    fileUpload.style.borderColor = "#00d4aa";
+                    fileUpload.querySelector(".file-upload-text").innerHTML =
+                        "<strong>Fichier sélectionné !</strong> Cliquez pour changer";
+                    fileUpload.querySelector(
+                        ".file-upload-hint",
+                    ).style.display = "none";
+                    fileUpload.querySelector(".file-upload-icon i").className =
+                        "fas fa-check-circle";
                 }
 
                 function formatFileSize(bytes) {
@@ -1211,9 +1265,20 @@
                 function resetFileUpload() {
                     // Reset l'affichage du fichier
                     fileSelected.classList.remove("show");
-                    fileUpload.style.display = "block";
                     fileInput.value = "";
                     fileName.textContent = "";
+
+                    // Restaurer l'apparence originale
+                    fileUpload.style.display = "block";
+                    fileUpload.style.background = "#f8f9fa";
+                    fileUpload.style.borderColor = "#e0e0e0";
+                    fileUpload.querySelector(".file-upload-text").innerHTML =
+                        "<strong>Cliquez pour choisir un fichier</strong> ou glissez-déposez";
+                    fileUpload.querySelector(
+                        ".file-upload-hint",
+                    ).style.display = "block";
+                    fileUpload.querySelector(".file-upload-icon i").className =
+                        "fas fa-cloud-upload-alt";
                 }
 
                 // Soumission du formulaire
