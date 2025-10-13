@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	gomail "gopkg.in/mail.v2"
 )
 
@@ -30,10 +29,10 @@ func ContactPage(writer http.ResponseWriter, request *http.Request) {
 
 // Envoyer le formulaire
 func SendContactForm(writer http.ResponseWriter, request *http.Request) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Erreur lors du chargement du fichier .env")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("[handlers.go] -> Erreur lors du chargement du fichier .env")
+	// }
 
 	if request.Method != http.MethodPost {
 		http.Error(writer, "Méthode non autorisée", http.StatusMethodNotAllowed)

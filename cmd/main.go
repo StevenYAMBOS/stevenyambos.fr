@@ -14,7 +14,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Erreur lors du chargement du fichier .env")
+		log.Fatal("[main.go] -> Erreur lors du chargement du fichier .env")
 	}
 
 	router := http.NewServeMux()
