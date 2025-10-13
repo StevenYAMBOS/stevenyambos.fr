@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -37,10 +38,23 @@ func TestSendContactFormHandler(t *testing.T) {
 			req.Method, http.MethodPost)
 	}
 
-	// Check the response body is what we expect.
-	// expected := template.Must(template.ParseFiles("./templates/home.html"))
-	// if rr.Body.String() != expected {
-	// 	t.Errorf("handler returned unexpected body: got %v want %v",
-	// 		rr.Body.String(), expected)
-	// }
+	// Limite de taille de 100 MB (pour limiter les abus)
+	const maxBytesSize = 100 << 20 // 100 MB
+	req.Body = http.MaxBytesReader(rr, req.Body, maxBytesSize)
+
+	// check if request body is not too large
+	data, err := io.ReadAll(req.Body)
+	if err != nil {
+		if len(data) >= maxBytesSize {
+			http.Error(rr, "Corps de requête trop large", http.StatusBadRequest)
+			return
+		}
+
+		// Check the response body is what we expect.
+		// expected := template.Must(template.ParseFiles("./templates/home.html"))
+		// if rr.Body.String() != expected {
+		// 	t.Errorf("handler returned unexpected body: got %v want %v",
+		// 		rr.Body.String(), expected)
+		// }
+	}
 }
