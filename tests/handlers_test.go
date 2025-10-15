@@ -125,10 +125,6 @@ func TestSendContactFormHandler(t *testing.T) {
 
 		handler := http.HandlerFunc(handlers.SendContactForm)
 		handler.ServeHTTP(rr, req)
-
-		// Note: Ce test retournera 500 car il ne peut pas se connecter à SMTP
-		// Pour l'améliorer, vous devriez mocker la fonction d'envoi d'email
-		// (voir recommandations ci-dessous)
 		assert.NotNil(t, rr.Code)
 	})
 
@@ -139,7 +135,6 @@ func TestSendContactFormHandler(t *testing.T) {
 		writer.WriteField("object", "Test")
 		writer.WriteField("email", "test@example.com")
 
-		// Ajouter un message extrêmement volumineux
 		largeMessage := make([]byte, 200<<20) // 200 MB
 		for i := range largeMessage {
 			largeMessage[i] = 'a'
