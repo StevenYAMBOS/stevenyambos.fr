@@ -2,13 +2,13 @@
   "name": "stevenyambos.fr",
   "version": "1.0.0",
   "description": "Portfolio Steven YAMBOS 2025",
-  "main": "server.js",
+  "main": "index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "dev": "nodemon",
-    "start": "tsc && node dist/server.js",
+    "start": "tsc && node dist/index.js",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
