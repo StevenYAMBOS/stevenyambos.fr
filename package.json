@@ -8,15 +8,19 @@
   },
   "scripts": {
     "dev": "nodemon",
-    "start": "tsc && node dist/index.js",
-    "build": "tsc",
+    "start": "tsc && cp -r src/server/public dist/server && node dist/index.js",
+    "build": "tsc && cp -r src/server/public dist/server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Steven YAMBOS",
   "license": "ISC",
   "dependencies": {
+    "@types/multer": "^2.0.0",
+    "@types/nodemailer": "^7.0.2",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.10"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
