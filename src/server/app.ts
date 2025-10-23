@@ -107,7 +107,7 @@ const ContactFormSubmit = async (req: Request, res: Response) => {
       `,
       text: `
         Nouveau message de contact
-        De: ${email}
+        De: <h3>${email}</h3>
         Objet: ${object}
         Date: ${new Date().toLocaleString("fr-FR")}
         
