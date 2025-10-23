@@ -1,11 +1,7 @@
-import express, { Request, Response } from "express";
 import { SERVER_PORT } from "./configs/envVariables";
+import { app } from "./server/app";
 
-const app = express();
-app.get("/", (req: Request, res: Response) => {
-  res.send("<h1>PORTFOLIO STEVEN</h1>");
-});
-
+// Lancement du serveur HTTP
 app.listen(SERVER_PORT, () => {
   console.log(
     `Le serveur est lançé à l'adresse : http://localhost:${SERVER_PORT}`
