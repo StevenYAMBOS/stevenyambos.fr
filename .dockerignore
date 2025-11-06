@@ -1,0 +1,12 @@
+# Fichiers à ignorer lors de la construction Docker
+node_modules/
+.git/
+.gitignore
+.env
+*.md
+sources/
+README.md
+.DS_Store
+.vscode/
+.idea/
+

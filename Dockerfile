@@ -1,27 +1,16 @@
-FROM golang:1.24 AS builder
+# Utilise nginx pour servir les fichiers statiques
+FROM nginx:alpine
 
-WORKDIR /src
+# Copie les fichiers statiques dans le répertoire nginx
+COPY index.html style.css script.js /usr/share/nginx/html/
+COPY docs/ /usr/share/nginx/html/docs/
 
-COPY go.mod go.sum ./
-RUN go mod download
+# Copie la configuration nginx personnalisée (décommentez si vous voulez l'utiliser)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY . .
+# Expose le port 80
+EXPOSE 80
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -trimpath -ldflags="-s -w -extldflags '-static'" -o /out/portfolio ./cmd
+# Démarre nginx
+CMD ["nginx", "-g", "daemon off;"]
 
-FROM gcr.io/distroless/static-debian12
-
-WORKDIR /app
-
-COPY --from=builder /out/portfolio /app/portfolio
-
-COPY templates ./templates
-COPY docs ./docs
-
-ENV PORT=8080
-EXPOSE 8080
-
-USER nonroot:nonroot
-
-ENTRYPOINT ["/app/portfolio"]
