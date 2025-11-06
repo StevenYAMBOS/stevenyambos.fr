@@ -8,8 +8,8 @@ COPY docs/ /usr/share/nginx/html/docs/
 # Copie la configuration nginx personnalisée
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose le port 80
-EXPOSE 80
+# Expose le port
+EXPOSE 8080
 
 # Démarre nginx
 CMD ["nginx", "-g", "daemon off;"]
