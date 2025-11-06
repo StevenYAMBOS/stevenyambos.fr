@@ -5,8 +5,8 @@ FROM nginx:alpine
 COPY index.html style.css script.js /usr/share/nginx/html/
 COPY docs/ /usr/share/nginx/html/docs/
 
-# Copie la configuration nginx personnalisée (décommentez si vous voulez l'utiliser)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copie la configuration nginx personnalisée
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose le port 80
 EXPOSE 80
