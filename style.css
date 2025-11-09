@@ -335,6 +335,14 @@ main {
   margin-left: 0.5em;
 }
 
+.project__image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 1em;
+}
+
 /* GitHub section (column layout) */
 #github .github__list {
   max-width: 600px;
