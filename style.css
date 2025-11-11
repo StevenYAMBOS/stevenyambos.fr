@@ -139,6 +139,15 @@ button {
   font-size: 1.2rem;
 }
 
+.tech-links {
+  display: block;
+  padding: 0.8em 1.4em;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: none;
+  transition: transform 0.2s ease-in-out;
+}
+
 .btn {
   display: block;
   padding: 0.8em 1.4em;
@@ -211,6 +220,43 @@ button {
 
 .btn--icon:active {
   transform: translateY(-5px);
+}
+
+.btn-link--outline {
+  width: 100%;
+  height: 100%;
+  color: var(--clr-primary);
+  /* border: 2px solid var(--clr-primary); */
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  transition: transform 0.2s linear;
+}
+
+.btn-link--outline:focus,
+.btn-link--outline:hover {
+  color: var(--clr-bg);
+  transform: translateY(-7px);
+
+}
+
+.btn-link--outline:before {
+  content: "";
+  position: absolute;
+  background-color: var(--clr-primary);
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  transition: right 0.2s ease-in-out;
+}
+
+.btn-link--outline:hover::before,
+.btn-link--outline:focus::before {
+  right: 0;
 }
 
 /*========
