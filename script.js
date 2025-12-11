@@ -11,8 +11,8 @@ const addThemeClass = (bodyClass, btnClass) => {
 const isDark = () => body.classList.contains("dark");
 
 const updateGitHubWidgetsTheme = (isDarkMode) => {
-  const theme = isDarkMode ? "whatsapp-light" : "whatsapp-dark";
-  const color = isDarkMode ? "3ddc84" : "3ddc84";
+  const theme = isDarkMode ? "github-dark-blue" : "react";
+  const color = isDarkMode ? "90a0d9" : "2978B5";
 
   const streakImg = document.getElementById("github-streak");
   const overviewImg = document.getElementById("github-overview");
@@ -23,7 +23,7 @@ const updateGitHubWidgetsTheme = (isDarkMode) => {
     streakImg.src = `https://streak-stats.demolab.com?user=StevenYAMBOS&theme=${theme}`;
   }
   if (overviewImg) {
-    overviewImg.src = `https://github-readme-stats.vercel.app/api?username=StevenYAMBOS&show_icons=true&theme=github-compact&hide_title=true`;
+    overviewImg.src = `https://github-readme-stats.vercel.app/api?username=StevenYAMBOS&show_icons=true&theme=${theme}&hide_title=true`;
   }
   if (langsImg) {
     langsImg.src = `https://github-readme-stats.vercel.app/api/top-langs/?username=StevenYAMBOS&layout=compact&langs_count=8&theme=${theme}`;
