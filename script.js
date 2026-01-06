@@ -20,13 +20,13 @@ const updateGitHubWidgetsTheme = (isDarkMode) => {
   const contribImg = document.getElementById("github-contrib");
 
   if (streakImg) {
-    streakImg.src = `https://streak-stats.demolab.com?user=StevenYAMBOS&theme=${theme}`;
+    streakImg.src = `https://github-readme-streak-stats-teal-theta.vercel.app?user=StevenYAMBOS&theme=${theme}`;
   }
   if (overviewImg) {
-    overviewImg.src = `https://github-readme-stats.vercel.app/api?username=StevenYAMBOS&show_icons=true&theme=${theme}&hide_title=true`;
+    overviewImg.src = `https://github-readme-stats-fast.vercel.app/api?username=StevenYAMBOS&show_icons=true&theme=${theme}&hide_title=true`;
   }
   if (langsImg) {
-    langsImg.src = `https://github-readme-stats.vercel.app/api/top-langs/?username=StevenYAMBOS&layout=compact&langs_count=8&theme=${theme}`;
+    langsImg.src = `https://github-readme-stats-fast.vercel.app/api/top-langs/?username=StevenYAMBOS&layout=compact&langs_count=8&theme=${theme}`;
   }
   if (contribImg) {
     contribImg.src = `https://ghchart.rshah.org/${color}/StevenYAMBOS`;
