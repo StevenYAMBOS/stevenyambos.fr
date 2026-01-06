@@ -9,8 +9,7 @@ COPY docs/ /usr/share/nginx/html/docs/
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose le port
-EXPOSE 8080
+EXPOSE 3000
 
 # Démarre nginx
 CMD ["nginx", "-g", "daemon off;"]
-

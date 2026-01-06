@@ -1,330 +1,632 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            name="description"
+            content="Steven YAMBOS — Back-End Developer. Building scalable REST APIs, cloud deployments, and high-quality services."
+        />
+        <meta
+            name="keywords"
+            content="Golang, Go, Chi, Gin, Fiber, Go testing, Backend, Back-End, Node.js, TypeScript, NestJS, Express, REST API, PostgreSQL, MongoDB, Docker, AWS, GCP, CI/CD"
+        />
+        <meta name="author" content="Steven YAMBOS" />
+        <title>Steven YAMBOS - Back-End Developer</title>
+        <link rel="canonical" href="https://stevenyambos.fr" />
+        <meta name="robots" content="index, follow" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description"
-    content="Steven YAMBOS — Back-End Developer. Building scalable REST APIs, cloud deployments, and high-quality services." />
-  <meta name="keywords"
-    content="Golang, Go, Chi, Gin, Fiber, Go testing, Backend, Back-End, Node.js, TypeScript, NestJS, Express, REST API, PostgreSQL, MongoDB, Docker, AWS, GCP, CI/CD" />
-  <meta name="author" content="Steven YAMBOS" />
-  <title>Steven YAMBOS - Back-End Developer</title>
-  <link rel="canonical" href="https://stevenyambos.fr" />
-  <meta name="robots" content="index, follow" />
+        <!-- Open Graph -->
+        <meta
+            property="og:title"
+            content="Steven YAMBOS — Back-End Developer"
+        />
+        <meta
+            property="og:description"
+            content="Back-End Developer specialized in Go. Explore my projects and get in touch."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://stevenyambos.fr" />
+        <meta
+            property="og:image"
+            content="https://avatars.githubusercontent.com/u/95619191?v=4"
+        />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Steven YAMBOS — Back-End Developer" />
-  <meta property="og:description"
-    content="Back-End Developer specialized in Go. Explore my projects and get in touch." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://stevenyambos.fr" />
-  <meta property="og:image" content="https://avatars.githubusercontent.com/u/95619191?v=4" />
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content="Steven YAMBOS — Back-End Developer"
+        />
+        <meta
+            name="twitter:description"
+            content="Back-End developer at your service"
+        />
+        <meta
+            name="twitter:image"
+            content="https://avatars.githubusercontent.com/u/95619191?v=4"
+        />
+        <meta name="twitter:creator" content="@StevenYambos" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Steven YAMBOS — Back-End Developer" />
-  <meta name="twitter:description" content="Back-End developer at your service" />
-  <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/95619191?v=4" />
-  <meta name="twitter:creator" content="@StevenYambos" />
+        <!-- Favicon et apple touch icon -->
+        <link
+            rel="icon"
+            type="image/png"
+            href="https://avatars.githubusercontent.com/u/95619191?v=4"
+        />
+        <link
+            rel="apple-touch-icon"
+            href="https://avatars.githubusercontent.com/u/95619191?v=4"
+        />
 
-  <!-- Favicon et apple touch icon -->
-  <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/95619191?v=4" />
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/95619191?v=4" />
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "Person",
+                "name": "Steven YAMBOS",
+                "jobTitle": "Back-End Developer",
+                "url": "https://stevenyambos.fr",
+                "image": "https://avatars.githubusercontent.com/u/95619191?v=4",
+                "sameAs": [
+                    "https://github.com/StevenYAMBOS",
+                    "https://www.linkedin.com/in/steven-yambos",
+                    "https://x.com/StevenYambos",
+                    "https://stackoverflow.com/users/17386694/steven-yambos"
+                ],
+                "telephone": "+33-616-456-012",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Paris",
+                    "addressRegion": "Île-de-France",
+                    "addressCountry": "FR"
+                }
+            }
+        </script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
+        <link rel="stylesheet" href="style.css" />
+        <title>Steven YAMBOS</title>
+    </head>
 
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Steven YAMBOS",
-    "jobTitle": "Back-End Developer",
-    "url": "https://stevenyambos.fr",
-    "image": "https://avatars.githubusercontent.com/u/95619191?v=4",
-    "sameAs": [
-      "https://github.com/StevenYAMBOS",
-      "https://www.linkedin.com/in/steven-yambos",
-      "https://x.com/StevenYambos",
-      "https://stackoverflow.com/users/17386694/steven-yambos"
-    ],
-    "telephone": "+33-616-456-012",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Paris",
-      "addressRegion": "Île-de-France",
-      "addressCountry": "FR"
-    }
-  }
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css" />
-  <title>Steven YAMBOS</title>
-</head>
+    <body class="light" id="top">
+        <header class="header center">
+            <h3>
+                <a href="https://stevenyambos.fr/" class="link">SY.</a>
+            </h3>
 
-<body class="light" id="top">
-  <header class="header center">
-    <h3>
-      <a href="https://stevenyambos.fr/" class="link">SY.</a>
-    </h3>
+            <nav class="nav center">
+                <ul class="nav__list center">
+                    <li class="nav__list-item">
+                        <a class="link link--nav" href="#projects">Projects</a>
+                    </li>
+                    <li class="nav__list-item">
+                        <a class="link link--nav" href="#skills">Skills</a>
+                    </li>
+                    <li class="nav__list-item">
+                        <a class="link link--nav" href="#github">GitHub</a>
+                    </li>
+                </ul>
 
-    <nav class="nav center">
-      <ul class="nav__list center">
-        <li class="nav__list-item">
-          <a class="link link--nav" href="#projects">Projects</a>
-        </li>
-        <li class="nav__list-item">
-          <a class="link link--nav" href="#skills">Skills</a>
-        </li>
-        <li class="nav__list-item">
-          <a class="link link--nav" href="#github">GitHub</a>
-        </li>
-      </ul>
+                <button
+                    type="button"
+                    aria-label="toggle theme"
+                    class="btn btn--icon"
+                >
+                    <i
+                        aria-hidden="true"
+                        id="btn-theme"
+                        class="fas fa-moon"
+                    ></i>
+                </button>
 
-      <button type="button" aria-label="toggle theme" class="btn btn--icon">
-        <i aria-hidden="true" id="btn-theme" class="fas fa-moon"></i>
-      </button>
+                <button
+                    type="button"
+                    aria-label="toggle navigation"
+                    class="btn btn--icon nav__hamburger"
+                >
+                    <i aria-hidden="true" class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </header>
 
-      <button type="button" aria-label="toggle navigation" class="btn btn--icon nav__hamburger">
-        <i aria-hidden="true" class="fas fa-bars"></i>
-      </button>
-    </nav>
-  </header>
+        <main>
+            <!-- About -->
+            <div class="about center">
+                <h1>
+                    Hi, I am <span class="about__name">Steven YAMBOS.</span>
+                </h1>
+                <h2 class="about__role">Back-End Developer</h2>
+                <p class="about__desc">
+                    I build scalable REST APIs, services, and integrations in
+                    Node.js/TypeScript, with strong experience across
+                    PostgreSQL, MongoDB, Docker, and cloud (AWS/GCP). I care
+                    about maintainability, performance, and clean architecture.
+                </p>
 
-  <main>
-    <!-- About -->
-    <div class="about center">
-      <h1>Hi, I am <span class="about__name">Steven YAMBOS.</span></h1>
-      <h2 class="about__role">Back-End Developer</h2>
-      <p class="about__desc">
-        I build scalable REST APIs, services, and integrations in Node.js/TypeScript,
-        with strong experience across PostgreSQL, MongoDB, Docker, and cloud (AWS/GCP).
-        I care about maintainability, performance, and clean architecture.
-      </p>
+                <div class="about__contact center">
+                    <a
+                        target="_blank"
+                        href="https://github.com/StevenYAMBOS/stevenyambos.fr/blob/prod/docs/CV_Steven_YAMBOS.pdf"
+                    >
+                        <span class="btn btn--outline">Download CV</span>
+                    </a>
 
-      <div class="about__contact center">
-        <a target="_blank" href="https://github.com/StevenYAMBOS/stevenyambos.fr/blob/prod/docs/CV_Steven_YAMBOS.pdf">
-          <span class="btn btn--outline">Download CV</span>
-        </a>
+                    <a
+                        href="mailto:stevenyambos@gmail.com"
+                        aria-label="email"
+                        class="link link--icon"
+                    >
+                        <i aria-hidden="true" class="fas fa-envelope"></i>
+                    </a>
 
-        <a href="mailto:stevenyambos@gmail.com" aria-label="email" class="link link--icon">
-          <i aria-hidden="true" class="fas fa-envelope"></i>
-        </a>
+                    <a
+                        target="_blank"
+                        href="https://github.com/StevenYAMBOS"
+                        aria-label="github"
+                        class="link link--icon"
+                    >
+                        <i aria-hidden="true" class="fab fa-github"></i>
+                    </a>
 
-        <a target="_blank" href="https://github.com/StevenYAMBOS" aria-label="github" class="link link--icon">
-          <i aria-hidden="true" class="fab fa-github"></i>
-        </a>
+                    <a
+                        target="_blank"
+                        href="https://www.linkedin.com/in/steven-yambos"
+                        aria-label="linkedin"
+                        class="link link--icon"
+                    >
+                        <i aria-hidden="true" class="fab fa-linkedin"></i>
+                    </a>
 
-        <a target="_blank" href="https://www.linkedin.com/in/steven-yambos" aria-label="linkedin"
-          class="link link--icon">
-          <i aria-hidden="true" class="fab fa-linkedin"></i>
-        </a>
+                    <a
+                        target="_blank"
+                        href="https://x.com/StevenYambos"
+                        aria-label="x"
+                        class="link link--icon"
+                    >
+                        <i aria-hidden="true" class="fab fa-twitter"></i>
+                    </a>
 
-        <a target="_blank" href="https://x.com/StevenYambos" aria-label="x" class="link link--icon">
-          <i aria-hidden="true" class="fab fa-twitter"></i>
-        </a>
+                    <a
+                        target="_blank"
+                        href="https://stackoverflow.com/users/17386694/steven-yambos"
+                        aria-label="stackoverflow"
+                        class="link link--icon"
+                    >
+                        <i aria-hidden="true" class="fab fa-stack-overflow"></i>
+                    </a>
+                </div>
+            </div>
 
-        <a target="_blank" href="https://stackoverflow.com/users/17386694/steven-yambos" aria-label="stackoverflow"
-          class="link link--icon">
-          <i aria-hidden="true" class="fab fa-stack-overflow"></i>
-        </a>
-      </div>
-    </div>
+            <!-- Projects -->
+            <section id="projects" class="section projects">
+                <h2 class="section__title">Last Projects</h2>
 
-    <!-- Projects -->
-    <section id="projects" class="section projects">
-      <h2 class="section__title">Last Projects</h2>
+                <div class="projects__grid">
+                    <div class="project">
+                        <h3 class="about__name">Waitify</h3>
+                        <img
+                            src="https://cdn.sanity.io/images/h1a1aanl/production/28520735b678b63012b9840d3e1f3b50a62d29af-768x768.png?fit=max&auto=format"
+                            alt="Waitify preview"
+                            class="project__image"
+                        />
+                        <p class="project__description">
+                            Virtual queue system via QR code for retailers.
+                            Backend API and infrastructure.
+                        </p>
+                        <ul class="project__stack">
+                            <li class="project__stack-item">Node.js</li>
+                            <li class="project__stack-item">TypeScript</li>
+                            <li class="project__stack-item">Microservices</li>
+                            <li class="project__stack-item">PostgreSQL</li>
+                            <li class="project__stack-item">GCP</li>
+                            <li class="project__stack-item">DigitalOcean</li>
+                            <li class="project__stack-item">Docker</li>
+                        </ul>
 
-      <div class="projects__grid">
-        <div class="project">
-          <h3 class="about__name">Waitify</h3>
-          <img
-            src="https://cdn.sanity.io/images/h1a1aanl/production/28520735b678b63012b9840d3e1f3b50a62d29af-768x768.png?fit=max&auto=format"
-            alt="Waitify preview" class="project__image">
-          <p class="project__description">
-            Virtual queue system via QR code for retailers. Backend API and infrastructure.
-          </p>
-          <ul class="project__stack">
-            <li class="project__stack-item">Node.js</li>
-            <li class="project__stack-item">TypeScript</li>
-            <li class="project__stack-item">Microservices</li>
-            <li class="project__stack-item">PostgreSQL</li>
-            <li class="project__stack-item">GCP</li>
-            <li class="project__stack-item">DigitalOcean</li>
-            <li class="project__stack-item">Docker</li>
-          </ul>
+                        <a
+                            target="_blank"
+                            href="https://github.com/StevenYAMBOS/waitify-api"
+                            aria-label="source code"
+                            class="link link--icon"
+                        >
+                            <i aria-hidden="true" class="fab fa-github"></i>
+                        </a>
+                        <a
+                            target="_blank"
+                            href="https://stevenyambos.fr"
+                            aria-label="live preview"
+                            class="link link--icon"
+                        >
+                            <i
+                                aria-hidden="true"
+                                class="fas fa-external-link-alt"
+                            ></i>
+                        </a>
+                    </div>
 
-          <a target="_blank" href="https://github.com/StevenYAMBOS/waitify-api" aria-label="source code"
-            class="link link--icon">
-            <i aria-hidden="true" class="fab fa-github"></i>
-          </a>
-          <a target="_blank" href="https://stevenyambos.fr" aria-label="live preview" class="link link--icon">
-            <i aria-hidden="true" class="fas fa-external-link-alt"></i>
-          </a>
+                    <div class="project">
+                        <h3 class="about__name">Smash Here</h3>
+                        <img
+                            src="https://github.com/StevenYAMBOS/Smash-Here-API/blob/pre-prod/assets/flame.webp?raw=true"
+                            alt="Smash Here preview"
+                            class="project__image"
+                        />
+                        <p class="project__description">
+                            Community e-sport platform turning game learning
+                            into structured, personalized roadmaps.
+                        </p>
+                        <ul class="project__stack">
+                            <li class="project__stack-item">Go</li>
+                            <li class="project__stack-item">
+                                Clean architecture
+                            </li>
+                            <li class="project__stack-item">MongoDB</li>
+                            <li class="project__stack-item">
+                                PostgreSQL (migration)
+                            </li>
+                            <li class="project__stack-item">AWS S3</li>
+                            <li class="project__stack-item">Docker</li>
+                            <li class="project__stack-item">Github Actions</li>
+                            <li class="project__stack-item">DigitalOcean</li>
+                        </ul>
+
+                        <a
+                            target="_blank"
+                            href="https://github.com/StevenYAMBOS/Smash-Here-API"
+                            aria-label="source code"
+                            class="link link--icon"
+                        >
+                            <i aria-hidden="true" class="fab fa-github"></i>
+                        </a>
+                        <a
+                            target="_blank"
+                            href="https://smashhere.fr"
+                            aria-label="live preview"
+                            class="link link--icon"
+                        >
+                            <i
+                                aria-hidden="true"
+                                class="fas fa-external-link-alt"
+                            ></i>
+                        </a>
+                    </div>
+
+                    <div class="project">
+                        <h3 class="about__name">Feedverse</h3>
+                        <img
+                            src="https://raw.githubusercontent.com/fyambos/Feedverse/refs/heads/main/mobile/assets/images/FeedverseIcon.png"
+                            alt="Feedverse preview"
+                            class="project__image"
+                        />
+                        <p class="project__description">
+                            Feedverse, a social network for fictional worlds
+                        </p>
+                        <ul class="project__stack">
+                            <li class="project__stack-item">Node.js</li>
+                            <li class="project__stack-item">Express.js</li>
+                            <li class="project__stack-item">TypeScript</li>
+                            <li class="project__stack-item">PostgreSQL</li>
+                            <li class="project__stack-item">
+                                Clean architecture
+                            </li>
+                            <li class="project__stack-item">Cloudflare</li>
+                            <li class="project__stack-item">Jest</li>
+                            <li class="project__stack-item">Supertest</li>
+                        </ul>
+
+                        <a
+                            target="_blank"
+                            href="https://github.com/StevenYAMBOS/douceurs-artisanales-api"
+                            aria-label="source code"
+                            class="link link--icon"
+                        >
+                            <i aria-hidden="true" class="fab fa-github"></i>
+                        </a>
+                        <a
+                            target="_blank"
+                            href="https://github.com/StevenYAMBOS/douceurs-artisanales-api"
+                            aria-label="live preview"
+                            class="link link--icon"
+                        >
+                            <i
+                                aria-hidden="true"
+                                class="fas fa-external-link-alt"
+                            ></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section class="section skills" id="skills">
+                <h2 class="section__title">Skills</h2>
+                <ul class="skills__list">
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://go.dev/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Golang (Go)</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://nodejs.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Node.js</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.typescriptlang.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >TypeScript</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://developer.mozilla.org/fr/docs/Web/JavaScript"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >JavaScript</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.postgresql.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >PostgreSQL</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.mongodb.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >MongoDB</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.docker.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Docker</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://aws.amazon.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Aazon Web Services (AWS)</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://cloud.google.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Google Cloud Platform (GCP)</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.digitalocean.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Digital Ocean</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://pkg.go.dev/testing"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Go testing</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://jestjs.io/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Jest</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://github.com/visionmedia/supertest"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Supertest</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Clean architecture</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://microservices.io/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Microservices</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://en.wikipedia.org/wiki/Test-driven_development"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Test-Driven-Design (TDD)</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://docs.github.com/en/actions"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >GitHub Actions</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://docs.gitlab.com/ci/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Gitlab CI</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.linux.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Linux</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.openapis.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >OpenAPI (Swagger)</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://redis.io/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Redis</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.gnu.org/software/bash/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Bash</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://www.markdownguide.org/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Markdown</a
+                        >
+                    </li>
+                    <li class="skills__list-item">
+                        <a
+                            class="tech-links btn-link--outline"
+                            href="https://claude.com/product/claude-code"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Claude Code</a
+                        >
+                    </li>
+                </ul>
+            </section>
+
+            <!-- GitHub Stats -->
+            <section id="github" class="section projects">
+                <h2 class="section__title">GitHub</h2>
+                <div class="github__list">
+                    <div class="github__card">
+                        <h3>Streak</h3>
+                        <br />
+                        <img
+                            id="github-streak"
+                            alt="GitHub Streak"
+                            src="https://streak-stats.demolab.com?user=StevenYAMBOS&theme=react"
+                        />
+                    </div>
+                    <div class="github__card">
+                        <h3>2025 Contributions</h3>
+                        <br />
+                        <img
+                            id="github-contrib"
+                            alt="2025 GitHub contributions chart"
+                            src="https://ghchart.rshah.org/2978B5/StevenYAMBOS"
+                        />
+                    </div>
+                    <div class="github__card">
+                        <h3>Overview</h3>
+                        <br />
+                        <img
+                            id="github-overview"
+                            alt="GitHub Stats"
+                            src="https://github-readme-stats.vercel.app/api?username=StevenYAMBOS&show_icons=true&theme=react&hide_title=true"
+                        />
+                    </div>
+                    <div class="github__card">
+                        <h3>Top Languages</h3>
+                        <br />
+                        <img
+                            id="github-langs"
+                            alt="Top Languages"
+                            src="https://github-readme-stats.vercel.app/api/top-langs/?username=StevenYAMBOS&layout=compact&langs_count=8&theme=react"
+                        />
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <a href="https://stevenyambos.fr" class="link footer__link">
+                © 2025 Steven YAMBOS
+            </a>
+        </footer>
+
+        <div class="scroll-container">
+            <div class="scroll-top">
+                <a aria-label="Scroll up" href="#top">
+                    <i aria-hidden="true" class="fas fa-arrow-up"></i>
+                </a>
+            </div>
         </div>
 
-        <div class="project">
-          <h3 class="about__name">Smash Here</h3>
-          <img src="https://github.com/StevenYAMBOS/Smash-Here-API/blob/pre-prod/assets/flame.webp?raw=true"
-            alt="Smash Here preview" class="project__image">
-          <p class="project__description">
-            Community e-sport platform turning game learning into structured, personalized roadmaps.
-          </p>
-          <ul class="project__stack">
-            <li class="project__stack-item">Go</li>
-            <li class="project__stack-item">Clean architecture</li>
-            <li class="project__stack-item">MongoDB</li>
-            <li class="project__stack-item">PostgreSQL (migration)</li>
-            <li class="project__stack-item">AWS S3</li>
-            <li class="project__stack-item">Docker</li>
-            <li class="project__stack-item">Github Actions</li>
-            <li class="project__stack-item">DigitalOcean</li>
-          </ul>
-
-          <a target="_blank" href="https://github.com/StevenYAMBOS/Smash-Here-API" aria-label="source code"
-            class="link link--icon">
-            <i aria-hidden="true" class="fab fa-github"></i>
-          </a>
-          <a target="_blank" href="https://smashhere.fr" aria-label="live preview" class="link link--icon">
-            <i aria-hidden="true" class="fas fa-external-link-alt"></i>
-          </a>
-        </div>
-
-        <div class="project">
-          <h3 class="about__name">Douceurs artisanales</h3>
-          <img src="https://savourschool.com.au/wp-content/uploads/2023/08/BLOG-IMAGE-Hazelnut-Paris-Brest.jpg"
-            alt="Douceurs artisanales preview" class="project__image">
-          <p class="project__description">
-            An app that lets you discover the sweet treats offered by artisan pastry chefs in Paris, listed by district.
-          </p>
-          <ul class="project__stack">
-            <li class="project__stack-item">Node.js</li>
-            <li class="project__stack-item">NestJS</li>
-            <li class="project__stack-item">TypeScript</li>
-            <li class="project__stack-item">Jest</li>
-            <li class="project__stack-item">Supertest</li>
-          </ul>
-
-          <a target="_blank" href="https://github.com/StevenYAMBOS/douceurs-artisanales-api" aria-label="source code"
-            class="link link--icon">
-            <i aria-hidden="true" class="fab fa-github"></i>
-          </a>
-          <a target="_blank" href="https://github.com/StevenYAMBOS/douceurs-artisanales-api" aria-label="live preview"
-            class="link link--icon">
-            <i aria-hidden="true" class="fas fa-external-link-alt"></i>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Skills -->
-    <section class="section skills" id="skills">
-      <h2 class="section__title">Skills</h2>
-      <ul class="skills__list">
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://go.dev/" target="_blank"
-            rel="noopener noreferrer">Golang (Go)</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://nodejs.org/" target="_blank"
-            rel="noopener noreferrer">Node.js</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.typescriptlang.org/"
-            target="_blank" rel="noopener noreferrer">TypeScript</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline"
-            href="https://developer.mozilla.org/fr/docs/Web/JavaScript" target="_blank"
-            rel="noopener noreferrer">JavaScript</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.postgresql.org/"
-            target="_blank" rel="noopener noreferrer">PostgreSQL</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.mongodb.com/"
-            target="_blank" rel="noopener noreferrer">MongoDB</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.docker.com/"
-            target="_blank" rel="noopener noreferrer">Docker</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://aws.amazon.com/"
-            target="_blank" rel="noopener noreferrer">Aazon Web Services (AWS)</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://cloud.google.com/"
-            target="_blank" rel="noopener noreferrer">Google Cloud Platform (GCP)</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.digitalocean.com/"
-            target="_blank" rel="noopener noreferrer">Digital Ocean</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://pkg.go.dev/testing"
-            target="_blank" rel="noopener noreferrer">Go testing</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://jestjs.io/" target="_blank"
-            rel="noopener noreferrer">Jest</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline"
-            href="https://github.com/visionmedia/supertest" target="_blank" rel="noopener noreferrer">Supertest</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline"
-            href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank"
-            rel="noopener noreferrer">Clean architecture</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://microservices.io/"
-            target="_blank" rel="noopener noreferrer">Microservices</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline"
-            href="https://en.wikipedia.org/wiki/Test-driven_development" target="_blank"
-            rel="noopener noreferrer">Test-Driven-Design (TDD)</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://docs.github.com/en/actions"
-            target="_blank" rel="noopener noreferrer">GitHub Actions</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://docs.gitlab.com/ci/"
-            target="_blank" rel="noopener noreferrer">Gitlab CI</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.linux.org/"
-            target="_blank" rel="noopener noreferrer">Linux</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.openapis.org/"
-            target="_blank" rel="noopener noreferrer">OpenAPI (Swagger)</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://redis.io/" target="_blank"
-            rel="noopener noreferrer">Redis</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.gnu.org/software/bash/"
-            target="_blank" rel="noopener noreferrer">Bash</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline" href="https://www.markdownguide.org/"
-            target="_blank" rel="noopener noreferrer">Markdown</a></li>
-        <li class="skills__list-item"><a class="tech-links btn-link--outline"
-            href="https://claude.com/product/claude-code" target="_blank" rel="noopener noreferrer">Claude Code</a></li>
-      </ul>
-    </section>
-
-    <!-- GitHub Stats -->
-    <section id="github" class="section projects">
-      <h2 class="section__title">GitHub</h2>
-      <div class="github__list">
-        <div class="github__card">
-          <h3>Streak</h3>
-          <br />
-          <img id="github-streak" alt="GitHub Streak"
-            src="https://streak-stats.demolab.com?user=StevenYAMBOS&theme=react" />
-        </div>
-        <div class="github__card">
-          <h3>2025 Contributions</h3>
-          <br />
-          <img id="github-contrib" alt="2025 GitHub contributions chart"
-            src="https://ghchart.rshah.org/2978B5/StevenYAMBOS" />
-        </div>
-        <div class="github__card">
-          <h3>Overview</h3>
-          <br />
-          <img id="github-overview" alt="GitHub Stats"
-            src="https://github-readme-stats.vercel.app/api?username=StevenYAMBOS&show_icons=true&theme=react&hide_title=true" />
-        </div>
-        <div class="github__card">
-          <h3>Top Languages</h3>
-          <br />
-          <img id="github-langs" alt="Top Languages"
-            src="https://github-readme-stats.vercel.app/api/top-langs/?username=StevenYAMBOS&layout=compact&langs_count=8&theme=react" />
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="footer">
-    <a href="https://stevenyambos.fr" class="link footer__link">
-      © 2025 Steven YAMBOS
-    </a>
-  </footer>
-
-  <div class="scroll-container">
-    <div class="scroll-top">
-      <a aria-label="Scroll up" href="#top">
-        <i aria-hidden="true" class="fas fa-arrow-up"></i>
-      </a>
-    </div>
-  </div>
-
-  <script src="./script.js"></script>
-</body>
-
+        <script src="./script.js"></script>
+    </body>
 </html>
