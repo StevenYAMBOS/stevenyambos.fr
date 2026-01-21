@@ -8,4 +8,5 @@ axum = "0.8.8"
 dotenvy = "0.15.7"
 openssl = "0.10.75"
 postgres = "0.19.12"
+sqlx = "0.8.6"
 tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread"] }
