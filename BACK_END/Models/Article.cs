@@ -1,4 +1,4 @@
-
+namespace Portfolio.Models;
 
 public class Article
 {
