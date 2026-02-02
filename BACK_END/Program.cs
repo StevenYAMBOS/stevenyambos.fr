@@ -21,6 +21,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers(); // C'est cool ça -> `Adds endpoints for controller actions to the IEndpointRouteBuilder without specifying any routes.`
 
-app.MapGet("/", () => "Hello World!");
+// app.MapGet("/", () => "Hello World!");
 
 app.Run();
