@@ -7,7 +7,7 @@ public record class Register
   string Password
   );
 
-public record class Login
+public record class LoginModel
 (
   string Email,
   string Username,
