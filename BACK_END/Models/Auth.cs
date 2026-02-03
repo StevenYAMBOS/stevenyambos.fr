@@ -1,6 +1,6 @@
 namespace Portfolio.Models;
 
-public record class Register
+public record class RegisterModel
 (
   string Email,
   string Username,
