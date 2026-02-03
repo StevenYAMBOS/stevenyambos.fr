@@ -5,7 +5,7 @@ using Portfolio.Models;
 
 namespace Portfolio.Controllers.RegisterController
 {
-  [Route("api/[controller]")]
+  [Route("auth/[controller]")]
   [ApiController]
   public class RegisterController : ControllerBase
   {
