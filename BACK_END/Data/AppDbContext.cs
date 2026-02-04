@@ -1,11 +1,13 @@
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Portfolio.Entities;
 
-public class AppDbContext : IdentityDbContext<IdentityUser>
+namespace Portfolio.Data
 {
-  public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+  public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
   {
-
+    public DbSet<User> Users { get; set; }
   }
 }
