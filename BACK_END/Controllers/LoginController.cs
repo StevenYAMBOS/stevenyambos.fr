@@ -33,7 +33,7 @@ namespace Portfolio.Controllers.LoginController
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LoginService([FromBody] LoginModel model)
+    public async Task<IActionResult> LoginService([FromBody] LoginDTO model)
     {
       try
       {
