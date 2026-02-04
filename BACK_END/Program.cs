@@ -6,6 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Ajouter les services au conteneur
+builder.Services.AddControllers();
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
 
@@ -42,9 +45,6 @@ builder.Services.AddAuthorizationBuilder()
 // Configurer DbContext avec le connexion Psql
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Ajouter les services au conteneur
-builder.Services.AddControllers();
-
 var app = builder.Build();
 
 // Petit middleware
@@ -54,6 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers(); // C'est cool ça -> `Adds endpoints for controller actions to the IEndpointRouteBuilder without specifying any routes.`
 

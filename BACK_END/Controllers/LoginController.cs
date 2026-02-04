@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -8,8 +9,9 @@ using Portfolio.Models;
 namespace Portfolio.Controllers.LoginController
 
 {
-  [Route("auth/[controller]")]
+  [Route("auth")]
   [ApiController]
+
 
   public class LoginController : ControllerBase
   {
@@ -30,7 +32,7 @@ namespace Portfolio.Controllers.LoginController
       _config = config;
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<IActionResult> LoginService([FromBody] LoginModel model)
     {
       try

@@ -1,12 +1,14 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Portfolio.Models;
 
 namespace Portfolio.Controllers.RegisterController
 {
-  [Route("auth/[controller]")]
+  [Route("auth")]
   [ApiController]
+
   public class RegisterController : ControllerBase
   {
     private readonly UserManager<IdentityUser> _userManager;
@@ -16,7 +18,7 @@ namespace Portfolio.Controllers.RegisterController
       _userManager = userManager;
     }
 
-    [HttpPost("/register/{role}")]
+    [HttpPost("register")]
     public async Task<IActionResult> RegisterService([FromBody] RegisterModel model, [FromRoute] string role)
     {
       try

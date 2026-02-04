@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 public class ApplicationController : Controller
 {
 
-  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "AdminManagerPolicy")]
+  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "AdminPolicy")]
   [HttpGet("/admin")]
   public IActionResult Admin()
   {
@@ -21,12 +21,4 @@ public class ApplicationController : Controller
   {
     return Ok("users only");
   }
-
-  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "AdminManagerUserPolicy")]
-  [HttpGet("/everyone")]
-  public IActionResult EveryOne()
-  {
-    return Ok("hello everyone");
-  }
-
 }
