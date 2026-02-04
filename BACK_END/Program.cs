@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var jwtSecret = builder.Configuration["AppSettings:jwt"];
+var jwtSecret = builder.Configuration["AppSettings:Token"];
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 var issuer = builder.Configuration["AppSettings:Issuer"];
 var audience = builder.Configuration["AppSettings:Audience"];
