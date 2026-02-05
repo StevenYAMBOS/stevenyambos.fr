@@ -13,6 +13,26 @@ namespace Portfolio.Services
 {
   public class AuthService(AppDbContext context, IConfiguration configuration) : IAuthService
   {
+    public async Task<User?> RegisterAsync(UserDTO request)
+    {
+      if (await context.Users.AnyAsync(u => u.Email == request.Email))
+      {
+        return null;
+      }
+      var user = new User();
+      var hashedPassword = new PasswordHasher<User>()
+          .HashPassword(user, request.Password);
+
+      user.Email = request.Email;
+      user.Username = request.Username;
+      user.Password = hashedPassword;
+      user.Role = request.Role;
+      context.Users.Add(user);
+      await context.SaveChangesAsync();
+
+      return user;
+    }
+
     public async Task<TokenResponseDTO?> LoginAsync(UserDTO request)
     {
       var user = await context.Users
@@ -48,7 +68,7 @@ namespace Portfolio.Services
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.IsAdmin.ToString())
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
@@ -104,26 +124,5 @@ namespace Portfolio.Services
       }
       return await CreateTokenResponse(user);
     }
-
-    public async Task<User?> RegisterAsync(UserDTO request)
-    {
-      if (await context.Users.AnyAsync(u => u.Email == request.Email))
-      {
-        return null;
-      }
-      var user = new User();
-      var hashedPassword = new PasswordHasher<User>()
-          .HashPassword(user, request.Password);
-
-      user.Email = request.Email;
-      user.Username = request.Username;
-      user.Password = hashedPassword;
-      user.IsAdmin = request.IsAdmin;
-      context.Users.Add(user);
-      await context.SaveChangesAsync();
-
-      return user;
-    }
-
   }
 }
