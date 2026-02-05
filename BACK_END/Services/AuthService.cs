@@ -15,6 +15,7 @@ namespace Portfolio.Services
   {
     public async Task<TokenResponseDTO?> LoginAsync(UserDTO request)
     {
+      Console.WriteLine("SERVICE D'INSCRIPTION APPELÉ !");
       var user = await context.Users
           .FirstOrDefaultAsync(u => u.Username == request.Username);
       if (user is null)

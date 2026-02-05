@@ -1,9 +1,13 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.Entities;
 
+[Table("users")]
 public class User
 {
+  [Key]
+  [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
   [Column("id")]
   public int Id { get; set; }
   [Column("email")]
