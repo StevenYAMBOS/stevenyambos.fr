@@ -15,9 +15,8 @@ namespace Portfolio.Services
   {
     public async Task<TokenResponseDTO?> LoginAsync(UserDTO request)
     {
-      Console.WriteLine("SERVICE D'INSCRIPTION APPELÉ !");
       var user = await context.Users
-          .FirstOrDefaultAsync(u => u.Username == request.Username);
+          .FirstOrDefaultAsync(u => u.Email == request.Email);
       if (user is null)
       {
         return null;
@@ -47,9 +46,9 @@ namespace Portfolio.Services
     {
       var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.IsAdmin.ToString())
             };
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
@@ -108,7 +107,7 @@ namespace Portfolio.Services
 
     public async Task<User?> RegisterAsync(UserDTO request)
     {
-      if (await context.Users.AnyAsync(u => u.Username == request.Username))
+      if (await context.Users.AnyAsync(u => u.Email == request.Email))
       {
         return null;
       }
@@ -116,8 +115,10 @@ namespace Portfolio.Services
       var hashedPassword = new PasswordHasher<User>()
           .HashPassword(user, request.Password);
 
+      user.Email = request.Email;
       user.Username = request.Username;
       user.Password = hashedPassword;
+      user.IsAdmin = request.IsAdmin;
       context.Users.Add(user);
       await context.SaveChangesAsync();
 
