@@ -27,6 +27,7 @@ namespace Portfolio.Services
       user.Username = request.Username;
       user.Password = hashedPassword;
       user.Role = request.Role;
+      user.CreatedAt = DateTime.UtcNow.AddDays(1);
       context.Users.Add(user);
       await context.SaveChangesAsync();
 
@@ -44,6 +45,7 @@ namespace Portfolio.Services
 
       var passwordVerificationResult = new PasswordHasher<User>()
           .VerifyHashedPassword(user, user.Password, request.Password);
+      user.LastLogin = DateTime.UtcNow.AddDays(1);
       if (passwordVerificationResult == PasswordVerificationResult.Failed)
       {
         return null;

@@ -22,5 +22,7 @@ public class User
   public DateTime? RefreshTokenExpiryTime { get; set; }
   [Column("created_at")]
   public DateTime? CreatedAt { get; set; }
+  [Column("last_login")]
+  public DateTime? LastLogin { get; set; }
   // public DateTime? UpdatedAt { get; set; }
 }

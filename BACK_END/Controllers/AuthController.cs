@@ -63,7 +63,7 @@ namespace Portfolio.Controllers
             return Ok("You are authenticated!");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet("admin-only")]
         public IActionResult AdminOnlyEndpoint()
         {
