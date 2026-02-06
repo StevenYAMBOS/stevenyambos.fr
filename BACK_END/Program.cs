@@ -37,6 +37,7 @@ var app = builder.Build();
 // Petit middleware
 if (app.Environment.IsDevelopment())
 {
+  app.Logger.LogInformation("Lancement de l'app !");
   app.UseDeveloperExceptionPage();
   /*   app.MapOpenApi();
     app.MapScalarApiReference(); */
