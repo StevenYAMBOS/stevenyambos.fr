@@ -24,5 +24,6 @@ public class User
   public DateTime? CreatedAt { get; set; }
   [Column("last_login")]
   public DateTime? LastLogin { get; set; }
+  [Column("updated_at")]
   public DateTime? UpdatedAt { get; set; }
 }
