@@ -4,3 +4,39 @@
 2026-02-08 11:37:13.252 +01:00 [INF] Hosting environment: Development
 2026-02-08 11:37:13.252 +01:00 [INF] Content root path: /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/BACK_END
 2026-02-08 11:37:21.194 +01:00 [INF] Application is shutting down...
+2026-02-08 17:10:16.165 +01:00 [INF] User profile is available. Using '/home/steven/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-02-08 17:10:16.225 +01:00 [INF] Now listening on: http://localhost:5261
+2026-02-08 17:10:16.226 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-02-08 17:10:16.226 +01:00 [INF] Hosting environment: Development
+2026-02-08 17:10:16.226 +01:00 [INF] Content root path: /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/BACK_END
+2026-02-08 17:10:46.251 +01:00 [INF] Request starting HTTP/1.1 POST http://localhost:5261/api/auth/login - application/json 71
+2026-02-08 17:10:46.268 +01:00 [WRN] Failed to determine the https port for redirect.
+2026-02-08 17:10:49.803 +01:00 [INF] Executed DbCommand (50ms) [Parameters=[@request_Email='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.last_login, u.password, u.refresh_token, u.refresh_token_expiry_time, u.role, u.updated_at, u.username
+FROM users AS u
+WHERE u.email = @request_Email
+LIMIT 1
+2026-02-08 17:10:50.000 +01:00 [INF] Executed DbCommand (25ms) [Parameters=[@p9='?' (DbType = Guid), @p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?' (DbType = DateTime), @p6='?', @p7='?' (DbType = DateTime), @p8='?'], CommandType='"Text"', CommandTimeout='30']
+UPDATE users SET created_at = @p0, email = @p1, last_login = @p2, password = @p3, refresh_token = @p4, refresh_token_expiry_time = @p5, role = @p6, updated_at = @p7, username = @p8
+WHERE id = @p9;
+2026-02-08 17:10:50.006 +01:00 [ERR] An unhandled exception has occurred while executing the request.
+System.ArgumentNullException: Value cannot be null. (Parameter 'logger')
+   at System.ArgumentNullException.Throw(String paramName)
+   at System.ArgumentNullException.ThrowIfNull(Object argument, String paramName)
+   at Microsoft.Extensions.Logging.LoggerExtensions.Log(ILogger logger, LogLevel logLevel, EventId eventId, Exception exception, String message, Object[] args)
+   at Microsoft.Extensions.Logging.LoggerExtensions.LogInformation(ILogger logger, String message, Object[] args)
+   at Portfolio.Controllers.AuthController.Login(UserDTO request) in /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/BACK_END/Controllers/AuthController.cs:line 37
+   at lambda_method4(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-02-08 17:10:50.020 +01:00 [INF] Request finished HTTP/1.1 POST http://localhost:5261/api/auth/login - 500 null text/plain; charset=utf-8 3769.5802ms
+2026-02-08 17:14:59.325 +01:00 [INF] Application is shutting down...

@@ -4,63 +4,43 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Portfolio.Data;
 using Portfolio.Services;
-using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
+var builder = WebApplication.CreateBuilder(args);
 
-try
+builder.Services.AddControllers();
+
+var jwtSecret = builder.Configuration["AppSettings:Token"];
+var key = Encoding.ASCII.GetBytes(jwtSecret);
+var issuer = builder.Configuration["AppSettings:Issuer"];
+var audience = builder.Configuration["AppSettings:Audience"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
-  Log.Information("INFO : Lancement de l'application");
-  var builder = WebApplication.CreateBuilder(args);
-  builder.Host.UseSerilog((context, loggerConfig) =>
-      loggerConfig.ReadFrom.Configuration(context.Configuration)
-  );
-
-  builder.Services.AddControllers();
-
-  var jwtSecret = builder.Configuration["AppSettings:Token"];
-  var key = Encoding.ASCII.GetBytes(jwtSecret);
-  var issuer = builder.Configuration["AppSettings:Issuer"];
-  var audience = builder.Configuration["AppSettings:Audience"];
-
-  builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+  options.TokenValidationParameters = new TokenValidationParameters
   {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-      ValidateIssuer = true,
-      ValidIssuer = issuer,
-      ValidateAudience = true,
-      ValidAudience = audience,
-      ValidateIssuerSigningKey = true,
-      IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-  });
+    ValidateIssuer = true,
+    ValidIssuer = issuer,
+    ValidateAudience = true,
+    ValidAudience = audience,
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key)
+  };
+});
 
-  builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-  // Configurer DbContext avec le connexion Psql
-  builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Configurer DbContext avec le connexion Psql
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-  var app = builder.Build();
+var app = builder.Build();
 
-  if (app.Environment.IsDevelopment())
-  {
-    app.UseDeveloperExceptionPage();
-  }
-
-  app.UseHttpsRedirection();
-  app.UseAuthentication();
-  app.MapControllers();
-
-  app.Run();
-}
-catch (Exception ex)
+if (app.Environment.IsDevelopment())
 {
-  Log.Fatal(ex, "ERREUR : Problème lors du lancement de l'application");
+  app.UseDeveloperExceptionPage();
 }
-finally
-{
-  Log.CloseAndFlush();
-}
+
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.MapControllers();
+
+app.Run();
