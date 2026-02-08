@@ -1,0 +1,6 @@
+2026-02-08 11:37:13.191 +01:00 [INF] User profile is available. Using '/home/steven/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-02-08 11:37:13.250 +01:00 [INF] Now listening on: http://localhost:5261
+2026-02-08 11:37:13.251 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-02-08 11:37:13.252 +01:00 [INF] Hosting environment: Development
+2026-02-08 11:37:13.252 +01:00 [INF] Content root path: /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/BACK_END
+2026-02-08 11:37:21.194 +01:00 [INF] Application is shutting down...
