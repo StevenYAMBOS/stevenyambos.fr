@@ -34,17 +34,14 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder
 
 var app = builder.Build();
 
-// Petit middleware
 if (app.Environment.IsDevelopment())
 {
   app.Logger.LogInformation("Lancement de l'app !");
   app.UseDeveloperExceptionPage();
-  /*   app.MapOpenApi();
-    app.MapScalarApiReference(); */
 }
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
-app.MapControllers(); // C'est cool ça -> `Adds endpoints for controller actions to the IEndpointRouteBuilder without specifying any routes.`
+app.MapControllers();
 
 app.Run();
