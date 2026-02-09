@@ -5,7 +5,7 @@ namespace Portfolio.Articles
 {
   public interface IArticles
   {
-    Task<Article> CreateArticleAsync(ArticleDTO request);
-    Task<Article> GetOneArticleAsync(ArticleDTO request);
+    Task<Article?> CreateArticleAsync(ArticleDTO request);
+    Task<Article?> GetOneArticleAsync(ArticleDTO request);
   }
 }
