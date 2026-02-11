@@ -1,8 +1,8 @@
 using Portfolio.Entities;
 using Portfolio.Models;
-using Portfolio.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Portfolio.Repositories;
 
 namespace Portfolio.Controllers
 {

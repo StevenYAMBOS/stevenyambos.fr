@@ -3,38 +3,39 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Models;
+using Portfolio.Repositories;
 
-namespace Portfolio.Articles
+namespace Portfolio.Services
 {
-  public class ArticleService(AppDbContext context) : IArticles
-  {
-    public async Task<Article?> CreateArticleAsync(ArticleDTO request)
+    public class ArticleService(AppDbContext context) : IArticles
     {
-      if (await context.Articles.AnyAsync(a => a.Title == request.Title))
-      {
-        return null;
-      }
+        public async Task<Article?> CreateArticleAsync(ArticleDTO request)
+        {
+            if (await context.Articles.AnyAsync(a => a.Title == request.Title))
+            {
+                return null;
+            }
 
-      var article = new Article
-      {
-        Title = request.Title,
-        Slug = request.Slug,
-        Description = request.Description,
-        Content = request.Content,
-        // Cover = request.Cover,
-        Categories = request.Categories,
-        Tags = request.Tags,
-        CreatedAt = DateTime.UtcNow.AddDays(1)
-      };
-      context.Articles.Add(article);
-      await context.SaveChangesAsync();
+            var article = new Article
+            {
+                Title = request.Title,
+                Slug = request.Slug,
+                Description = request.Description,
+                Content = request.Content,
+                // Cover = request.Cover,
+                Categories = request.Categories,
+                Tags = request.Tags,
+                CreatedAt = DateTime.UtcNow.AddDays(1)
+            };
+            context.Articles.Add(article);
+            await context.SaveChangesAsync();
 
-      return article;
+            return article;
+        }
+
+        public Task<Article?> GetOneArticleAsync(ArticleDTO request)
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public Task<Article?> GetOneArticleAsync(ArticleDTO request)
-    {
-      throw new NotImplementedException();
-    }
-  }
 }

@@ -11,7 +11,7 @@ namespace BACK_END.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController() : ControllerBase
+    public class TestController(IR2Client r2) : ControllerBase
     {
 
         [HttpGet]
@@ -21,15 +21,22 @@ namespace BACK_END.Controllers
             Console.WriteLine(message);
             return message;
         }
-        /*         [HttpPost("bucket")]
-                static async Task ListBuckets()
-                {
-                    var response = await s3Client.ListBucketsAsync();
+        [HttpPost("bucket")]
+        public async Task ListBuckets()
+        {
+            var result = await r2.ListObjectsAsync(
+                bucketName: "my-bucket",
+                prefix: null); // null for all objects
 
-                    foreach (var s3Bucket in response.Buckets)
-                    {
-                        Console.WriteLine("{0}", s3Bucket.BucketName);
-                    }
-                } */
+            foreach (var obj in result.Data)
+            {
+                Console.WriteLine($"Key: {obj.Key}");
+                Console.WriteLine($"Size: {obj.Size} bytes");
+                Console.WriteLine($"Modified: {obj.LastModified}");
+                Console.WriteLine($"ETag: {obj.ETag}");
+                Console.WriteLine();
+            }
+
+        }
     }
 }
