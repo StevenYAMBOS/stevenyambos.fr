@@ -13,6 +13,7 @@ var jwtSecret = builder.Configuration["AppSettings:Token"];
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 var issuer = builder.Configuration["AppSettings:Issuer"];
 var audience = builder.Configuration["AppSettings:Audience"];
+var dbConfig = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -30,7 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configurer DbContext avec le connexion Psql
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
 
 var app = builder.Build();
 
