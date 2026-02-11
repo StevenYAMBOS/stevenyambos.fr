@@ -3,7 +3,6 @@ using Portfolio.Models;
 using Portfolio.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-//using Serilog;
 
 namespace Portfolio.Controllers
 {
