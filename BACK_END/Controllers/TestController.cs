@@ -24,8 +24,6 @@ namespace BACK_END.Controllers
         [HttpGet("bucket")]
         public async Task ListBuckets()
         {
-            Console.WriteLine("STEVEN YAMBOS ✅");
-
             var result = await r2.ListObjectsAsync(
                 bucketName: "portfolio-bucket",
                 prefix: null);

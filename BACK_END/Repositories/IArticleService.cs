@@ -1,5 +1,4 @@
 using Portfolio.Entities;
-using Portfolio.Models;
 
 namespace Portfolio.Repositories
 {
