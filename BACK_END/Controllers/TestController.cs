@@ -21,12 +21,14 @@ namespace BACK_END.Controllers
             Console.WriteLine(message);
             return message;
         }
-        [HttpPost("bucket")]
+        [HttpGet("bucket")]
         public async Task ListBuckets()
         {
+            Console.WriteLine("STEVEN YAMBOS ✅");
+
             var result = await r2.ListObjectsAsync(
-                bucketName: "my-bucket",
-                prefix: null); // null for all objects
+                bucketName: "portfolio-bucket",
+                prefix: null);
 
             foreach (var obj in result.Data)
             {
@@ -34,7 +36,6 @@ namespace BACK_END.Controllers
                 Console.WriteLine($"Size: {obj.Size} bytes");
                 Console.WriteLine($"Modified: {obj.LastModified}");
                 Console.WriteLine($"ETag: {obj.ETag}");
-                Console.WriteLine();
             }
 
         }

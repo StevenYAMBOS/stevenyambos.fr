@@ -24,6 +24,7 @@ var cloudflareAccountId = builder.Configuration["Cloudflare:AccountId"];
 var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"];
 var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"];
 var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"];
+var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"];
 
 /* var accessKey = cloudflareAccessKeyId;
 var secretKey = cloudflareSecretAccessKey;
@@ -52,11 +53,21 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Configurer DbContext avec le connexion Psql
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
 
+builder.Services.AddCloudflareApiClient(options =>
+{
+    options.ApiToken = cloudflareApiEndpoint;
+    options.AccountId = cloudflareAccountId;
+    options.DefaultTimeout = TimeSpan.FromSeconds(30);
+    options.RateLimiting.IsEnabled = true;
+    options.RateLimiting.EnableProactiveThrottling = true;
+    options.RateLimiting.QuotaLowThreshold = 0.1;
+});
+
 builder.Services.AddCloudflareR2Client(options =>
 {
     options.AccessKeyId = cloudflareAccessKeyId;
     options.SecretAccessKey = cloudflareSecretAccessKey;
-    options.EndpointUrl = cloudflareApiEndpoint;
+    options.EndpointUrl = cloudflareEndpointUrl;
 });
 
 var app = builder.Build();
