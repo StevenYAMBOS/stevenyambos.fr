@@ -24,7 +24,7 @@ namespace Portfolio.Services
     {
       var result = await r2.ListObjectsAsync(
           bucketName: "portfolio-bucket",
-          prefix: null); // null for all objects
+          prefix: null);
 
       foreach (var obj in result.Data)
       {

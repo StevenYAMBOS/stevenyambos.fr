@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Portfolio.Services;
 
-namespace BACK_END.Controllers
+namespace Portfolio.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

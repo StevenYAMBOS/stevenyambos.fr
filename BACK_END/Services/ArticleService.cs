@@ -7,14 +7,33 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-    public class ArticleService(AppDbContext context) : IArticleService
+    public class ArticleService(AppDbContext context, IFileService fileService) : IArticleService
     {
-        public async Task<Article> CreateArticleAsync(Article request)
+        public async Task<Article> CreateArticleAsync(ArticleDTO request)
         {
-            context.Articles.Add(request);
+            if (await context.Articles.AnyAsync(a => a.Title == request.Title))
+            {
+                return null;
+            }
+            string[] allowedExtensions = [".jpeg", ".png", ".webp", ".svg"];
+            string filePath = "/articles";
+            await fileService.SaveFileAsync(request.Cover, allowedExtensions, filePath, request.Id);
+            var article = new Article
+            {
+                Title = request.Title,
+                Slug = request.Slug,
+                Description = request.Description,
+                Content = request.Content,
+                // article.Cover = createdImageName;
+                Author = request.Author,
+                Categories = request.Categories,
+                Tags = request.Tags,
+                CreatedAt = DateTime.UtcNow.AddDays(1)
+            };
+            context.Articles.Add(article);
             await context.SaveChangesAsync();
 
-            return request;
+            return article;
         }
 
         public async Task DeleteArticleAsync(Article request)
