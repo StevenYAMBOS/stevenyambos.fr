@@ -20,7 +20,7 @@ public class FileService(IWebHostEnvironment environment) : IFileService
       throw new ArgumentException($"Seules les extentions suivantes sont autorisées : {string.Join(",", allowedFileExtensions)}");
     }
 
-    var fileName = $"{articleId.ToString()}{ext}";
+    var fileName = $"{articleId}{ext}";
     var fileNameWithPath = Path.Combine(path, fileName);
     using var stream = new FileStream(fileNameWithPath, FileMode.Create);
     await imageFile.CopyToAsync(stream);

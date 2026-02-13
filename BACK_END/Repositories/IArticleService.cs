@@ -2,7 +2,7 @@ using Portfolio.Entities;
 
 namespace Portfolio.Repositories
 {
-    public interface IArticles
+    public interface IArticleService
     {
         Task<Article> CreateArticleAsync(Article request);
         Task<Article> UpdateArticleAsync(Article request);

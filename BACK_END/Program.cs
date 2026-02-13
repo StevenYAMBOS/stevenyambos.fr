@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Variables d'environnements
 var jwtSecret = builder.Configuration["AppSettings:Token"];
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 var issuer = builder.Configuration["AppSettings:Issuer"];
@@ -25,15 +26,6 @@ var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"];
 var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"];
 var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"];
 var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"];
-
-/* var accessKey = cloudflareAccessKeyId;
-var secretKey = cloudflareSecretAccessKey;
-var credentials = new BasicAWSCredentials(accessKey, secretKey);
-IAmazonS3 s3Client = new AmazonS3Client(credentials, new AmazonS3Config
-{
-  // Provide your Cloudflare account ID
-  ServiceURL = cloudflareApiEndpoint,
-}); */
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -48,11 +40,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// Injection de dépendances
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
-// Configurer DbContext avec le connexion Psql
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
-
 builder.Services.AddCloudflareApiClient(options =>
 {
     options.ApiToken = cloudflareApiEndpoint;
@@ -62,12 +55,19 @@ builder.Services.AddCloudflareApiClient(options =>
     options.RateLimiting.EnableProactiveThrottling = true;
     options.RateLimiting.QuotaLowThreshold = 0.1;
 });
-
 builder.Services.AddCloudflareR2Client(options =>
 {
     options.AccessKeyId = cloudflareAccessKeyId;
     options.SecretAccessKey = cloudflareSecretAccessKey;
     options.EndpointUrl = cloudflareEndpointUrl;
+});
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+        });
 });
 
 var app = builder.Build();
@@ -80,5 +80,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.MapControllers();
+app.UseCors();
 
 app.Run();

@@ -7,7 +7,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-    public class ArticleService(AppDbContext context) : IArticles
+    public class ArticleService(AppDbContext context) : IArticleService
     {
         public async Task<Article> CreateArticleAsync(Article request)
         {
