@@ -15,9 +15,9 @@ namespace Portfolio.Services
             {
                 return null;
             }
-            string[] allowedExtensions = [".jpeg", ".png", ".webp", ".svg"];
-            string filePath = "/articles";
-            await fileService.SaveFileAsync(request.Cover, allowedExtensions, filePath, request.Id);
+            // string[] allowedExtensions = [".jpeg", ".png", ".webp", ".svg"];
+            // string filePath = "/articles";
+            // await fileService.SaveFileAsync(request.Cover, allowedExtensions, filePath, request.Id);
             var article = new Article
             {
                 Title = request.Title,
