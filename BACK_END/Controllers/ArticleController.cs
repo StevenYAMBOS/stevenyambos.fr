@@ -17,43 +17,27 @@ namespace Portfolio.Controllers
     [HttpPost]
     public async Task<IActionResult> CreateArticle([FromForm] ArticleDTO request)
     {
+      if (request.Cover?.Length > 1 * 1024 * 1024)
+      {
+        return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excéder 1MB.");
+      }
+
       try
       {
         var article = await articleService.CreateArticleAsync(request);
-        if (request.Cover?.Length > 1 * 1024 * 1024)
-        {
-          return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excédder 1MB.");
-        }
         if (article is null)
         {
-          log.LogError("Erreur lors de la création de l'article : {0} à {1}", request.Title, DateTime.Now);
-          return BadRequest("L'utilisateur existe déjà.");
+          log.LogWarning("Article déjà existant : {Title}", request.Title);
+          return Conflict("Un article avec ce titre existe déjà.");
         }
-        log.LogInformation("{Title} créé avec succès.", request.Title);
-        return Ok(article);
 
-        // string[] allowedExtensions = [".jpeg", ".png", ".webp", ".svg"];
-        // string filePath = "/articles";
-        // string createdImageName = await fileService.SaveFileAsync(request.Cover, allowedExtensions, filePath, request.Id);
-
-        // var article = new Article();
-        // {
-        //   article.Title = request.Title,
-        //   article.Slug = request.Slug,
-        //   article.Description = request.Description,
-        //   article.Content = request.Content,
-        //   article.Content = request.Content,
-        //   article.Author = request.Author,
-        //   article.Categories = request.Categories,
-        //   article.Tags = request.Tags,
-        // };
-
-        // var createdArticle = await articleService.CreateArticleAsync(article);
-        // return CreatedAtAction(nameof(CreateArticle), createdArticle);
+        log.LogInformation("Article '{Title}' créé avec succès.", request.Title);
+        return CreatedAtAction(nameof(CreateArticle), new { id = article.Id }, article);
       }
       catch (Exception ex)
       {
-        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        log.LogError(ex, "Erreur lors de la création de l'article '{Title}'.", request.Title);
+        return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur interne est survenue.");
       }
     }
   }

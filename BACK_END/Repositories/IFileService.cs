@@ -6,6 +6,6 @@ namespace Portfolio.Repositories;
 
 public interface IFileService
 {
-  Task SaveFileAsync(IFormFile imageFile, string[] allowedFileExtensions, string path, Guid articleId);
-  void DeleteFile(string fileNameWithExtension);
+  Task<string> UploadFileAsync(IFormFile file, string[] allowedExtensions, string folder, Guid resourceId);
+  Task DeleteFileAsync(string objectKey);
 }

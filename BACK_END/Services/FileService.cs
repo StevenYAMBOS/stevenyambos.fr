@@ -6,31 +6,29 @@ namespace Portfolio.Services;
 
 public class FileService(IR2Client r2) : IFileService
 {
-  public void DeleteFile(string fileNameWithExtension)
+  public async Task<string> UploadFileAsync(IFormFile file, string[] allowedExtensions, string folder, Guid resourceId)
   {
-    throw new NotImplementedException();
-  }
+    ArgumentNullException.ThrowIfNull(file);
 
-  public async Task SaveFileAsync(IFormFile imageFile, string[] allowedFileExtensions, string path, Guid articleId)
-  {
-    ArgumentNullException.ThrowIfNull(imageFile);
-    var ext = Path.GetExtension(imageFile.FileName);
-    if (!allowedFileExtensions.Contains(ext))
+    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+    if (!allowedExtensions.Contains(ext))
     {
-      throw new ArgumentException($"Seules les extentions suivantes sont autorisées : {string.Join(",", allowedFileExtensions)}");
+      throw new ArgumentException($"Extensions autorisées : {string.Join(", ", allowedExtensions)}");
     }
 
-    var fileName = $"{articleId}.{ext}";
-    var fileNameWithPath = Path.Combine(path, fileName);
-    // using var stream = new FileStream(fileNameWithPath, FileMode.Create);
-    // await imageFile.CopyToAsync(stream);
-    // return fileName;
-    await using var stream = File.OpenRead(fileNameWithPath);
-    var result = await r2.UploadAsync(
-    bucketName: "portfolio-bucket",
-    objectKey: fileNameWithPath,
-    fileStream: stream);
+    var objectKey = $"{folder}/{resourceId}{ext}";
 
-    // return result;
+    await using var stream = file.OpenReadStream();
+    await r2.UploadAsync(
+        bucketName: "portfolio-bucket",
+        objectKey: objectKey,
+        fileStream: stream);
+
+    return objectKey;
+  }
+
+  public Task DeleteFileAsync(string objectKey)
+  {
+    throw new NotImplementedException();
   }
 }
