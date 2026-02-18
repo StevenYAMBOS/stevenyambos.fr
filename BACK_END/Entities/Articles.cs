@@ -32,6 +32,7 @@ public class Article
   public string? Cover { get; set; }
 
   [Column("author")]
+  [Required]
   public Guid Author { get; set; }
 
   [Column("is_published")]

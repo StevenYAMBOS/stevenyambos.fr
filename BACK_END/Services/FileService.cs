@@ -16,8 +16,7 @@ public class FileService(IR2Client r2) : IFileService
       throw new ArgumentException($"Extensions autorisées : {string.Join(", ", allowedExtensions)}");
     }
 
-    string R2publicUrl = "https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev";
-    var objectKey = $"{R2publicUrl}/{folder}/{resourceId}{ext}";
+    var objectKey = $"{folder}/{resourceId}{ext}";
 
     await using var stream = file.OpenReadStream();
     await r2.UploadAsync(
@@ -25,7 +24,9 @@ public class FileService(IR2Client r2) : IFileService
         objectKey: objectKey,
         fileStream: stream);
 
-    return objectKey;
+    var R2publicUrl = $"https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/{objectKey}";
+
+    return R2publicUrl;
   }
 
   public Task DeleteFileAsync(string objectKey)
