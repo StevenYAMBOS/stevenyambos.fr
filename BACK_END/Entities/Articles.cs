@@ -7,7 +7,7 @@ namespace Portfolio.Entities;
 public class Article
 {
   [Column("id")]
-  public int Id { get; set; }
+  public Guid Id { get; set; }
 
   [Column("title")]
   [Required]
