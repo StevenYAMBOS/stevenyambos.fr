@@ -70,6 +70,7 @@ namespace Portfolio.Services
             await context.SaveChangesAsync();
         }
 
+
         public async Task<Article?> FindArticleByIdAsync(Guid id)
         {
             var article = await context.Articles.FindAsync(id);
@@ -88,5 +89,6 @@ namespace Portfolio.Services
             await context.SaveChangesAsync();
             return request;
         }
+
     }
 }

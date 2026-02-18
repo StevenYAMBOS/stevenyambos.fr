@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Portfolio.Entities;
 using Portfolio.Models;
 using Portfolio.Repositories;
@@ -39,6 +40,25 @@ namespace Portfolio.Controllers
         log.LogError(ex, "Erreur lors de la création de l'article '{Title}'.", request.Title);
         return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur interne est survenue.");
       }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetOneArticle(Guid id)
+    {
+      var article = await articleService.FindArticleByIdAsync(id);
+      if (article == null)
+      {
+        log.LogInformation("Article avec l'id : `{id}` introuvable", id);
+        return StatusCode(StatusCodes.Status404NotFound, "Article introuvable");
+      }
+      return Ok(article);
+    }
+
+    [HttpGet()]
+    public async Task<IActionResult> GetAllArticles()
+    {
+      var articles = await articleService.GetArticlesAsync();
+      return Ok(articles);
     }
   }
 }
