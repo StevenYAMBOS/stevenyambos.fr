@@ -26,6 +26,7 @@ var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"];
 var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"];
 var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"];
 var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"];
+var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"];
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

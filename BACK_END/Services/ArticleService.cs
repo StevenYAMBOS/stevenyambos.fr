@@ -11,7 +11,7 @@ namespace Portfolio.Services
 {
     public class ArticleService(AppDbContext context, IFileService fileService) : IArticleService
     {
-        public async Task<Article?> CreateArticleAsync(ArticleDTO request)
+        public async Task<Article> CreateArticleAsync(ArticleDTO request)
         {
             if (await context.Articles.AnyAsync(a => a.Title == request.Title))
             {
@@ -20,11 +20,12 @@ namespace Portfolio.Services
 
             var articleId = Guid.NewGuid();
             string? coverUrl = null;
+            string bucketFolder = "articles";
 
             if (request.Cover is not null)
             {
                 string[] allowedExtensions = [".jpeg", ".jpg", ".png", ".webp", ".svg"];
-                coverUrl = await fileService.UploadFileAsync(request.Cover, allowedExtensions, "articles", articleId);
+                coverUrl = await fileService.UploadFileAsync(request.Cover, allowedExtensions, bucketFolder, articleId);
             }
 
             var slug = GenerateSlug(request.Title);

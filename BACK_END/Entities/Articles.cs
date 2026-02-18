@@ -32,7 +32,7 @@ public class Article
   public string? Cover { get; set; }
 
   [Column("author")]
-  public string Author { get; set; } = string.Empty;
+  public Guid Author { get; set; }
 
   [Column("is_published")]
   public bool IsPublished { get; set; } = false;
