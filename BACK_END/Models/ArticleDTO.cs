@@ -14,3 +14,8 @@ public record class ArticleDTO
   public List<string> Categories { get; set; } = [];
   public List<string> Tags { get; set; } = [];
 }
+
+public record class DeleteArticleDTO
+{
+  public Guid Id { get; set; }
+}

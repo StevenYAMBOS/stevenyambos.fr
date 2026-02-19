@@ -1,6 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Portfolio.Models;
 
 namespace Portfolio.Repositories;
 

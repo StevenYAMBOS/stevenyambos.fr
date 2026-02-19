@@ -29,8 +29,22 @@ public class FileService(IR2Client r2) : IFileService
     return R2publicUrl;
   }
 
-  public Task DeleteFileAsync(string objectKey)
+  public async Task DeleteFileAsync(string objectKey)
   {
-    throw new NotImplementedException();
+    if (string.IsNullOrEmpty(objectKey))
+    {
+      throw new ArgumentNullException(nameof(objectKey));
+    }
+
+    await r2.DeleteObjectAsync("portfolio-bucket", objectKey);
+
+    /*     var contentPath = environment.ContentRootPath;
+        var path = Path.Combine(contentPath, $"Uploads", objectKey);
+
+        if (!File.Exists(path))
+        {
+          throw new FileNotFoundException($"Invalid file path");
+        }
+        File.Delete(path); */
   }
 }

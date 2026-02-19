@@ -11,6 +11,27 @@ namespace Portfolio.Services
 {
     public class ArticleService(AppDbContext context, IFileService fileService) : IArticleService
     {
+        private static string GenerateSlug(string title)
+        {
+            return title
+                .ToLowerInvariant()
+                .Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
+                .ToString()
+                .Normalize(NormalizationForm.FormC)
+                .Replace(" ", "-")
+                .Replace("'", "-")
+                .Replace("--", "-")
+                .Trim('-');
+        }
+
+        public async Task<IEnumerable<Article>> GetArticlesAsync()
+        {
+            var articles = await context.Articles.ToListAsync();
+            return articles;
+        }
+
         public async Task<Article> CreateArticleAsync(ArticleDTO request)
         {
             if (await context.Articles.AnyAsync(a => a.Title == request.Title))
@@ -50,37 +71,10 @@ namespace Portfolio.Services
             return article;
         }
 
-        private static string GenerateSlug(string title)
-        {
-            return title
-                .ToLowerInvariant()
-                .Normalize(NormalizationForm.FormD)
-                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
-                .ToString()
-                .Normalize(NormalizationForm.FormC)
-                .Replace(" ", "-")
-                .Replace("'", "-")
-                .Replace("--", "-")
-                .Trim('-');
-        }
-        public async Task DeleteArticleAsync(Article request)
-        {
-            context.Articles.Remove(request);
-            await context.SaveChangesAsync();
-        }
-
-
         public async Task<Article?> FindArticleByIdAsync(Guid id)
         {
             var article = await context.Articles.FindAsync(id);
             return article;
-        }
-
-        public async Task<IEnumerable<Article>> GetArticlesAsync()
-        {
-            var articles = await context.Articles.ToListAsync();
-            return articles;
         }
 
         public async Task<Article> UpdateArticleAsync(Article request)
@@ -88,6 +82,14 @@ namespace Portfolio.Services
             context.Articles.Update(request);
             await context.SaveChangesAsync();
             return request;
+        }
+
+        public async Task DeleteArticleAsync(Article article)
+        {
+            context.Articles.Remove(article);
+            await context.SaveChangesAsync();
+
+            return;
         }
 
     }
