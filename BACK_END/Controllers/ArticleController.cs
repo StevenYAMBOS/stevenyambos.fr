@@ -66,25 +66,14 @@ namespace Portfolio.Controllers
     {
       try
       {
-        var existingArticle = await articleService.FindArticleByIdAsync(id);
-        if (existingArticle == null)
-        {
-          return StatusCode(StatusCodes.Status404NotFound, $"L'article avec l'id suivant n'existe pas : `{id}`");
-        }
-        else
-        {
-          Console.WriteLine("[1] 👇 Lien de la cover : ", existingArticle.Id);
-          await fileService.DeleteFileAsync(existingArticle.Cover);
-          Console.WriteLine("[2] 👇 ARTICLE : ", existingArticle);
-          await articleService.DeleteArticleAsync(existingArticle);
-        }
-
+        log.LogInformation("Article '{0}' supprimé avec succès.", id);
+        await articleService.DeleteArticleAsync(id);
         return NoContent();
       }
-      catch (Exception ex)
+      catch (KeyNotFoundException)
       {
-        log.LogError(ex.Message);
-        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        StatusCode(StatusCodes.Status500InternalServerError);
+        return NotFound();
       }
     }
 

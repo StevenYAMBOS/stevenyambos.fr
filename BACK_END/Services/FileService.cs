@@ -37,14 +37,5 @@ public class FileService(IR2Client r2) : IFileService
     }
 
     await r2.DeleteObjectAsync("portfolio-bucket", objectKey);
-
-    /*     var contentPath = environment.ContentRootPath;
-        var path = Path.Combine(contentPath, $"Uploads", objectKey);
-
-        if (!File.Exists(path))
-        {
-          throw new FileNotFoundException($"Invalid file path");
-        }
-        File.Delete(path); */
   }
 }

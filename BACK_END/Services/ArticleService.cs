@@ -84,13 +84,19 @@ namespace Portfolio.Services
             return request;
         }
 
-        public async Task DeleteArticleAsync(Article article)
+        public async Task DeleteArticleAsync(Guid articleId)
         {
-            context.Articles.Remove(article);
-            await context.SaveChangesAsync();
-
-            return;
+            var article = await FindArticleByIdAsync(articleId);
+            if (article == null)
+                throw new KeyNotFoundException("Article non trouvé");
+            else
+            {
+                Console.WriteLine("👇 LIEN : {0}", article.Cover);
+                Console.WriteLine("👇 LIEN FORMATÉ : {0}", article.Cover.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
+                await fileService.DeleteFileAsync(article.Cover.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
+                context.Articles.Remove(article);
+                await context.SaveChangesAsync();
+            }
         }
-
     }
 }

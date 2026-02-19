@@ -9,6 +9,6 @@ namespace Portfolio.Repositories
         Task<Article> UpdateArticleAsync(Article request);
         Task<IEnumerable<Article>> GetArticlesAsync();
         Task<Article?> FindArticleByIdAsync(Guid id);
-        Task DeleteArticleAsync(Article article);
+        Task DeleteArticleAsync(Guid articleId);
     }
 }
