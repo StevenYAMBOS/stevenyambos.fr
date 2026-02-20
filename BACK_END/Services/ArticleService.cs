@@ -77,11 +77,33 @@ namespace Portfolio.Services
             return article;
         }
 
-        public async Task<Article> UpdateArticleAsync(Article request)
+        public async Task<Article> UpdateArticleAsync(ArticleDTO request)
         {
-            context.Articles.Update(request);
+
+            var article = await FindArticleByIdAsync(request.Id) ?? throw new KeyNotFoundException("Article non trouvé");
+
+            var articleId = Guid.NewGuid();
+            string? coverUrl = null;
+            string bucketFolder = "articles";
+
+            if (request.Cover is not null)
+            {
+                string[] allowedExtensions = [".jpeg", ".jpg", ".png", ".webp", ".svg"];
+                coverUrl = await fileService.UploadFileAsync(request.Cover, allowedExtensions, bucketFolder, articleId);
+            }
+
+            article.Cover = coverUrl;
+            article.Title = request.Title;
+            article.Slug = request.Slug;
+            article.Description = request.Description;
+            article.Content = request.Content;
+            article.Categories = request.Categories;
+            article.Tags = request.Tags;
+            article.UpdatedAt = DateTime.UtcNow;
+
+            context.Articles.Update(article);
             await context.SaveChangesAsync();
-            return request;
+            return article;
         }
 
         public async Task DeleteArticleAsync(Guid articleId)
@@ -91,8 +113,6 @@ namespace Portfolio.Services
                 throw new KeyNotFoundException("Article non trouvé");
             else
             {
-                Console.WriteLine("👇 LIEN : {0}", article.Cover);
-                Console.WriteLine("👇 LIEN FORMATÉ : {0}", article.Cover.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
                 await fileService.DeleteFileAsync(article.Cover.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
                 context.Articles.Remove(article);
                 await context.SaveChangesAsync();
