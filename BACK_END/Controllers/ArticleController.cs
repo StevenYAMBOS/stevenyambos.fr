@@ -65,14 +65,24 @@ namespace Portfolio.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateArticle(Guid id, [FromForm] UpdateArticleDTO request)
     {
+      if (request.NewCoverFile?.Length > 1 * 1024 * 1024)
+      {
+        return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excéder 1MB.");
+      }
       try
       {
+        if (id != request.Id)
+        {
+          return StatusCode(StatusCodes.Status400BadRequest, $"Les `id` du `body` et de la requête ne correspondent pas pour cette article");
+        }
         await articleService.UpdateArticleAsync(id, request);
-        return NoContent();
+        return Ok(request);
+
       }
-      catch (KeyNotFoundException)
+      catch (Exception ex)
       {
-        return NotFound();
+        log.LogError(ex.Message);
+        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
       }
     }
 
