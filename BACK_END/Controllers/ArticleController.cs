@@ -61,7 +61,6 @@ namespace Portfolio.Controllers
       return Ok(articles);
     }
 
-
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateArticle(Guid id, [FromForm] UpdateArticleDTO request)
     {
@@ -73,6 +72,8 @@ namespace Portfolio.Controllers
       {
         if (id != request.Id)
         {
+          Console.WriteLine("ID ENTRÉ : {0}", id);
+          Console.WriteLine("ID BDD : {0}", request.Id);
           return StatusCode(StatusCodes.Status400BadRequest, $"Les `id` du `body` et de la requête ne correspondent pas pour cette article");
         }
         await articleService.UpdateArticleAsync(id, request);

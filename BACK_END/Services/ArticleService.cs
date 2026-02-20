@@ -77,16 +77,12 @@ namespace Portfolio.Services
             return article;
         }
 
-        /*
-            public string? ProductImage { get; set; } = URL (ExistingCoverUrl)
-            public IFormFile? ImageFile { get; set; } = FILE (NewCoverFile)
-        */
         public async Task<Article> UpdateArticleAsync(Guid id, UpdateArticleDTO request)
         {
             try
             {
                 var existingArticle = await FindArticleByIdAsync(id) ?? throw new KeyNotFoundException("Article non trouvé");
-                string oldImage = existingArticle.Cover;
+                string oldImage = existingArticle?.Cover;
                 if (request.NewCoverFile != null)
                 {
                     var articleId = Guid.NewGuid();
@@ -94,31 +90,34 @@ namespace Portfolio.Services
                     string bucketFolder = "articles";
                     string[] allowedExtensions = [".jpeg", ".jpg", ".png", ".webp", ".svg"];
                     coverUrl = await fileService.UploadFileAsync(request.NewCoverFile, allowedExtensions, bucketFolder, articleId);
-                    request.ExistingCoverUrl = coverUrl;
+                    request.Cover = coverUrl;
                 }
 
-                existingArticle.Cover = request.ExistingCoverUrl;
-                existingArticle.Id = request.Id;
-                existingArticle.Title = request.Title;
-                existingArticle.Slug = request.Slug;
-                existingArticle.Description = request.Description;
-                existingArticle.Content = request.Content;
-                existingArticle.Categories = request.Categories;
-                existingArticle.Tags = request.Tags;
+                existingArticle.Cover = request.NewCoverFile != null ? request.Cover : existingArticle.Cover;
+                existingArticle.Id = existingArticle.Id;
+                existingArticle.Title = request.Title ?? existingArticle.Title;
+                existingArticle.Slug = request.Slug ?? existingArticle.Slug;
+                existingArticle.Description = request.Description ?? existingArticle.Description;
+                existingArticle.Content = request.Content ?? existingArticle.Content;
+                existingArticle.Categories = request.Categories ?? existingArticle.Categories;
+                existingArticle.Tags = request.Tags ?? existingArticle.Tags;
                 existingArticle.UpdatedAt = DateTime.UtcNow;
 
                 context.Articles.Update(existingArticle);
                 await context.SaveChangesAsync();
 
-                if (request.ExistingCoverUrl != null)
+                if (request.NewCoverFile != null && oldImage != null)
                     await fileService.DeleteFileAsync(oldImage.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
 
                 return existingArticle;
             }
-            catch
+            catch (KeyNotFoundException)
             {
-                throw new KeyNotFoundException("Une erreur est survenue");
-
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Une erreur est survenue lors de la mise à jour de l'article.", ex);
             }
         }
 
