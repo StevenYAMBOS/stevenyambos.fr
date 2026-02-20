@@ -61,6 +61,21 @@ namespace Portfolio.Controllers
       return Ok(articles);
     }
 
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateArticle(Guid id, [FromForm] UpdateArticleDTO request)
+    {
+      try
+      {
+        await articleService.UpdateArticleAsync(id, request);
+        return NoContent();
+      }
+      catch (KeyNotFoundException)
+      {
+        return NotFound();
+      }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOneArticle(Guid id)
     {

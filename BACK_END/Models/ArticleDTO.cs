@@ -14,3 +14,19 @@ public record class ArticleDTO
   public List<string> Categories { get; set; } = [];
   public List<string> Tags { get; set; } = [];
 }
+
+public record class UpdateArticleDTO
+{
+  public Guid Id { get; set; }
+  public string Title { get; set; } = string.Empty;
+  public Guid Author { get; set; }
+  public string Slug { get; set; } = string.Empty;
+  public string Description { get; set; } = string.Empty;
+  public string Content { get; set; } = string.Empty;
+  [MaxLength(100)]
+  [Required]
+  public string ExistingCoverUrl { get; set; } = string.Empty;
+  public IFormFile? NewCoverFile { get; set; }
+  public List<string> Categories { get; set; } = [];
+  public List<string> Tags { get; set; } = [];
+}
