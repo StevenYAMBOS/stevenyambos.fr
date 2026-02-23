@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -55,6 +56,7 @@ namespace Portfolio.Controllers
     }
 
     [HttpGet()]
+    [Authorize(Roles = "Authenticated")]
     public async Task<IActionResult> GetAllArticles()
     {
       var articles = await articleService.GetArticlesAsync();
@@ -72,8 +74,6 @@ namespace Portfolio.Controllers
       {
         if (id != request.Id)
         {
-          Console.WriteLine("ID ENTRÉ : {0}", id);
-          Console.WriteLine("ID BDD : {0}", request.Id);
           return StatusCode(StatusCodes.Status400BadRequest, $"Les `id` du `body` et de la requête ne correspondent pas pour cette article");
         }
         await articleService.UpdateArticleAsync(id, request);

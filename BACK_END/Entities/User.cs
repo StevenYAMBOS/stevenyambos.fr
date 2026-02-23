@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Portfolio.Enums;
 
 namespace Portfolio.Entities;
 
@@ -15,7 +16,7 @@ public class User
   [Column("password")]
   public string Password { get; set; } = string.Empty;
   [Column("role")]
-  public string Role { get; set; } = string.Empty;
+  public Role Role { get; set; }
   [Column("refresh_token")]
   public string? RefreshToken { get; set; }
   [Column("refresh_token_expiry_time")]

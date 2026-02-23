@@ -1,18 +1,24 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Amazon.Runtime;
 using Amazon.S3;
 using Cloudflare.NET.Core;
 using Cloudflare.NET.R2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Portfolio.Data;
+using Portfolio.Models;
 using Portfolio.Repositories;
 using Portfolio.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 // Variables d'environnements
 var jwtSecret = builder.Configuration["AppSettings:Token"];
@@ -28,8 +34,28 @@ var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault
 var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"];
 var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"];
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services
+    .AddIdentity<UserRoles, IdentityRole>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddAuthentication(options =>
 {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.IncludeErrorDetails = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -42,9 +68,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 // Injection de dépendances
-builder.Services.AddScoped<IAuthService, AuthService>();
+// builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<TokenService, TokenService>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
 builder.Services.AddCloudflareApiClient(options =>
@@ -69,6 +96,11 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
         });
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
+    options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
 });
 
 var app = builder.Build();

@@ -1,4 +1,4 @@
-using Portfolio.Data;
+/* using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Models;
 using Microsoft.AspNetCore.Identity;
@@ -45,14 +45,13 @@ namespace Portfolio.Services
             }
 
             var passwordVerificationResult = new PasswordHasher<User>()
-                .VerifyHashedPassword(user, user.Password, request.Password);
+                .VerifyHashedPassword(user, request.Password, request.Password);
             user.LastLogin = DateTime.UtcNow.AddDays(1);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return null;
             }
 
-            //TokenResponseDTO response = await CreateTokenResponse(user);
             return await CreateTokenResponse(user);
         }
 
@@ -69,9 +68,11 @@ namespace Portfolio.Services
         {
             var claims = new List<Claim>
             {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
@@ -129,3 +130,4 @@ namespace Portfolio.Services
         }
     }
 }
+ */
