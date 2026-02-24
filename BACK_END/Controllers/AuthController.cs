@@ -17,7 +17,7 @@ namespace Portfolio.Controllers
          UserManager<ApplicationUser> userManager,
          TokenService tokenService,
          SignInManager<ApplicationUser> signInManager,
-         //  IAuthService authService,
+         AuthService authService,
          ILogger<Program> log
          ) : ControllerBase
     {
@@ -26,18 +26,35 @@ namespace Portfolio.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterRequest request)
         {
-            var result = await userManager.CreateAsync(
-                new ApplicationUser { UserName = request.Username, Email = request.Email, Role = Role.User },
-                request.Password!
-            );
-
-            if (result.Succeeded)
+            try
             {
-                request.Password = "";
-                return CreatedAtAction(nameof(Register), new { email = request.Email, role = request.Role }, request);
-            }
+                var user = await authService.RegisterAsync(request);
+                if (user is null)
+                {
+                    log.LogWarning("Utilisateur déjà existant : {0}", request.Username);
+                    return Conflict("Un utilisateur avec ce nom existe déjà.");
+                }
 
-            return Ok(result);
+                log.LogInformation("Utilisateur '{0}' créé avec succès.", request.Username);
+                return CreatedAtAction(nameof(Register), new { id = user.Id }, user);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Erreur lors de la création de l'utilisateur '{0}'.", request.Username);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur interne est survenue.");
+            }
+            /*             var result = await userManager.CreateAsync(
+                            new ApplicationUser { UserName = request.Username, Email = request.Email, Role = Role.User },
+                            request.Password!
+                        );
+
+                        if (result.Succeeded)
+                        {
+                            request.Password = "";
+                            return CreatedAtAction(nameof(Register), new { email = request.Email, role = request.Role }, request);
+                        }
+
+                        return Ok(result); */
         }
 
         [HttpPost("login")]

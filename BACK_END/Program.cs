@@ -72,7 +72,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Injection de dépendances
-// builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<TokenService, TokenService>();

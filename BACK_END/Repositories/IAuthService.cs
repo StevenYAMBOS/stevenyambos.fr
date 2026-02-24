@@ -5,8 +5,8 @@ namespace Portfolio.Repositories
 {
     public interface IAuthService
     {
-        Task<User?> RegisterAsync(UserDTO request);
-        Task<TokenResponseDTO?> LoginAsync(UserDTO request);
-        Task<TokenResponseDTO?> RefreshTokensAsync(RefreshTokenRequestDTO request);
+        Task<ApplicationUser?> RegisterAsync(RegisterRequest request);
+        /*         Task<TokenResponseDTO?> LoginAsync(UserDTO request);
+                Task<TokenResponseDTO?> RefreshTokensAsync(RefreshTokenRequestDTO request); */
     }
 }

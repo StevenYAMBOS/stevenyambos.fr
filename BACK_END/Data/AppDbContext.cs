@@ -8,7 +8,7 @@ using Portfolio.Models;
 namespace Portfolio.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
+        : IdentityDbContext<ApplicationUser>(options)
 {
   // public DbSet<User> Users { get; set; }
   public DbSet<Article> Articles { get; set; }
