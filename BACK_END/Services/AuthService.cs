@@ -26,7 +26,7 @@ namespace Portfolio.Services
             var result = await userManager.CreateAsync(user, request.Password!);
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(user, request.Role!);
+                await userManager.AddToRoleAsync(user, "user");
             }
             return user;
             // if (await context.Users.AnyAsync(u => u.Email == request.Email))
