@@ -11,8 +11,8 @@ using Portfolio.Data;
 
 namespace BACK_END.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ApplicationDbContext))]
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -218,7 +218,7 @@ namespace BACK_END.Migrations
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("Portfolio.Models.UserRoles", b =>
+            modelBuilder.Entity("Portfolio.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -287,7 +287,7 @@ namespace BACK_END.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Portfolio.Models.UserRoles", null)
+                    b.HasOne("Portfolio.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -296,7 +296,7 @@ namespace BACK_END.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Portfolio.Models.UserRoles", null)
+                    b.HasOne("Portfolio.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -305,7 +305,7 @@ namespace BACK_END.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Portfolio.Models.UserRoles", null)
+                    b.HasOne("Portfolio.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

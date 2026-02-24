@@ -11,7 +11,7 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
   private const int ExpirationMinutes = 30;
   private readonly ILogger<TokenService> _logger = logger;
 
-  public string CreateToken(UserRoles user)
+  public string CreateToken(ApplicationUser user)
   {
     var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
     var token = CreateJwtToken(
@@ -36,7 +36,7 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
         signingCredentials: credentials
       );
 
-  private List<Claim> CreateClaims(UserRoles user)
+  private List<Claim> CreateClaims(ApplicationUser user)
   {
     // var jwtSub = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["JwtRegisteredClaimNamesSub"];
 

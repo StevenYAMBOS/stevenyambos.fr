@@ -13,10 +13,10 @@ namespace Portfolio.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController(
-        AppDbContext context,
-         UserManager<UserRoles> userManager,
+        ApplicationDbContext context,
+         UserManager<ApplicationUser> userManager,
          TokenService tokenService,
-         SignInManager<UserRoles> signInManager,
+         SignInManager<ApplicationUser> signInManager,
          //  IAuthService authService,
          ILogger<Program> log
          ) : ControllerBase
@@ -27,7 +27,7 @@ namespace Portfolio.Controllers
         public async Task<ActionResult<User>> Register(RegisterRequest request)
         {
             var result = await userManager.CreateAsync(
-                new UserRoles { UserName = request.Username, Email = request.Email, Role = Role.User },
+                new ApplicationUser { UserName = request.Username, Email = request.Email, Role = Role.User },
                 request.Password!
             );
 

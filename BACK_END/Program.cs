@@ -35,18 +35,22 @@ var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"];
 var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"];
 
 builder.Services
-    .AddIdentity<UserRoles, IdentityRole>(options =>
+    .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedAccount = true;
         options.User.RequireUniqueEmail = true;
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 6;
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequireUppercase = true;
         options.Password.RequireLowercase = true;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.User.RequireUniqueEmail = true;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddDefaultTokenProviders()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -73,7 +77,7 @@ builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<TokenService, TokenService>();
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(dbConfig));
 builder.Services.AddCloudflareApiClient(options =>
 {
     options.ApiToken = cloudflareApiEndpoint;
@@ -99,7 +103,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
     options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
 });
 

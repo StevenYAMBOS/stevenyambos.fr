@@ -7,7 +7,7 @@ using Portfolio.Enums;
 
 namespace Portfolio.Models
 {
-    public class UserRoles : IdentityUser
+    public class ApplicationUser : IdentityUser<Guid>
     {
         public Role Role { get; set; }
 

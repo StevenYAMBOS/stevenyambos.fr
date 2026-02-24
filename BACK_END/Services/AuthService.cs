@@ -12,7 +12,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-    public class AuthService(AppDbContext context, IConfiguration configuration) : IAuthService
+    public class AuthService(ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
         public async Task<User?> RegisterAsync(UserDTO request)
         {
