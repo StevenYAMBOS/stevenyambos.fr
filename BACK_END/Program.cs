@@ -1,7 +1,5 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using Amazon.Runtime;
-using Amazon.S3;
 using Cloudflare.NET.Core;
 using Cloudflare.NET.R2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -56,7 +56,7 @@ namespace Portfolio.Controllers
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Authenticated")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> GetAllArticles()
     {
       var articles = await articleService.GetArticlesAsync();
@@ -64,6 +64,7 @@ namespace Portfolio.Controllers
     }
 
     [HttpPut("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> UpdateArticle(Guid id, [FromForm] UpdateArticleDTO request)
     {
       if (request.NewCoverFile?.Length > 1 * 1024 * 1024)
@@ -88,6 +89,7 @@ namespace Portfolio.Controllers
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteOneArticle(Guid id)
     {
       try
