@@ -1,145 +1,100 @@
-using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using Portfolio.Repositories;
 using Portfolio.Enums;
 
-namespace Portfolio.Services
+namespace Portfolio.Services;
+
+public class AuthService(UserManager<ApplicationUser> userManager,
+    TokenService tokenService,
+    ILogger<AuthService> logger) : IAuthService
 {
-    public class AuthService(AppDbContext context, IConfiguration configuration, UserManager<ApplicationUser> userManager) : IAuthService
+    public async Task<(bool Success, string? Token, IEnumerable<string>? Errors)> RegisterAsync(RegisterRequest request)
     {
-        public async Task<ApplicationUser?> RegisterAsync(RegisterRequest request)
+        var existingUser = await userManager.FindByEmailAsync(request.Email!);
+        if (existingUser is not null)
         {
-
-            var user = new ApplicationUser
-            {
-                UserName = request.Username,
-                Email = request.Email,
-            };
-            var result = await userManager.CreateAsync(user, request.Password!);
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(user, "user");
-            }
-            return user;
-            // if (await context.Users.AnyAsync(u => u.Email == request.Email))
-            // {
-            //     return null;
-            // }
-            // var user = new User();
-            // var hashedPassword = new PasswordHasher<User>()
-            //     .HashPassword(user, request.Password);
-
-            // user.Email = request.Email;
-            // user.Username = request.Username;
-            // user.Password = hashedPassword;
-            // user.Role = request.Role;
-            // user.CreatedAt = DateTime.UtcNow.AddDays(1);
-            // context.Users.Add(user);
-            // await context.SaveChangesAsync();
-
-            // return user;
+            logger.LogWarning("Inscription échouée : {Email} déjà utilisé", request.Email);
+            return (false, null, ["Cette adresse email est déjà utilisée."]);
         }
 
-        /*         public async Task<TokenResponseDTO?> LoginAsync(UserDTO request)
-                {
-                    var user = await context.Users
-                        .FirstOrDefaultAsync(u => u.Email == request.Email);
-                    if (user is null)
-                    {
-                        return null;
-                    }
+        var user = new ApplicationUser
+        {
+            UserName = request.Username,
+            Email = request.Email,
+            Role = Role.User,
+            CreatedAt = DateTime.UtcNow
+        };
 
-                    var passwordVerificationResult = new PasswordHasher<User>()
-                        .VerifyHashedPassword(user, request.Password, request.Password);
-                    user.LastLogin = DateTime.UtcNow.AddDays(1);
-                    if (passwordVerificationResult == PasswordVerificationResult.Failed)
-                    {
-                        return null;
-                    }
+        var result = await userManager.CreateAsync(user, request.Password!);
 
-                    return await CreateTokenResponse(user);
-                }
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(e => e.Description);
+            logger.LogWarning("Inscription échouée pour {Email} : {Errors}", request.Email, string.Join(", ", errors));
+            return (false, null, errors);
+        }
 
-                private async Task<TokenResponseDTO> CreateTokenResponse(User user)
-                {
-                    return new TokenResponseDTO
-                    {
-                        AccessToken = CreateToken(user),
-                        RefreshToken = await GenerateAndSaveRefreshToken(user)
-                    };
-                }
+        await userManager.AddToRoleAsync(user, Role.User.ToString());
 
-                private string CreateToken(User user)
-                {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
-                    };
+        var token = await tokenService.CreateTokenAsync(user);
 
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
+        return (true, token, null);
+    }
 
-                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-                    var tokenDescriptor = new JwtSecurityToken(
-                        issuer: configuration.GetValue<string>("AppSettings:Issuer"),
-                        audience: configuration.GetValue<string>("AppSettings:Audience"),
-                        claims: claims,
-                        expires: DateTime.UtcNow.AddDays(1),
-                        signingCredentials: creds
-                        );
+    public async Task<(bool Success, TokenResponseDTO? Tokens, string? Error)> LoginAsync(LoginRequest request)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email!);
+        if (user is null)
+        {
+            logger.LogWarning("Connexion échouée : utilisateur {Email} introuvable", request.Email);
+            return (false, null, "Identifiants incorrects.");
+        }
 
-                    return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-                }
+        var passwordValid = await userManager.CheckPasswordAsync(user, request.Password!);
+        if (!passwordValid)
+        {
+            logger.LogWarning("Connexion échouée : mot de passe incorrect pour {Email}", request.Email);
+            return (false, null, "Identifiants incorrects.");
+        }
 
-                private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
-                {
-                    var user = await context.Users.FindAsync(userId);
-                    if (user is null ||
-                        user.RefreshToken != refreshToken ||
-                        user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-                    {
-                        return null;
-                    }
-                    return user;
-                }
+        var tokens = await GenerateTokensAsync(user);
 
-                private string GenerateRefreshToken()
-                {
-                    var randomNumber = new byte[32];
-                    using var rng = RandomNumberGenerator.Create();
-                    rng.GetBytes(randomNumber);
-                    return Convert.ToBase64String(randomNumber);
-                }
+        return (true, tokens, null);
+    }
 
-                private async Task<string> GenerateAndSaveRefreshToken(User user)
-                {
-                    var refreshToken = GenerateRefreshToken();
-                    user.RefreshToken = refreshToken;
-                    user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-                    context.Users.Update(user);
-                    await context.SaveChangesAsync();
-                    return refreshToken;
-                }
+    private async Task<TokenResponseDTO> GenerateTokensAsync(ApplicationUser user)
+    {
+        user.LastLogin = DateTime.UtcNow;
+        user.RefreshToken = tokenService.GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        await userManager.UpdateAsync(user);
 
-                public async Task<TokenResponseDTO?> RefreshTokensAsync(RefreshTokenRequestDTO request)
-                {
-                    var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
-                    if (user is null)
-                    {
-                        return null;
-                    }
-                    return await CreateTokenResponse(user);
-                } */
+        return new TokenResponseDTO
+        {
+            AccessToken = await tokenService.CreateTokenAsync(user),
+            RefreshToken = user.RefreshToken
+        };
+    }
+
+    public async Task<(bool Success, TokenResponseDTO? Tokens, string? Error)> RefreshTokensAsync(RefreshTokenRequestDTO request)
+    {
+        var user = await userManager.FindByIdAsync(request.UserId);
+
+        if (user is null || user.RefreshToken != request.RefreshToken)
+        {
+            logger.LogWarning("Refresh token invalide pour UserId {UserId}", request.UserId);
+            return (false, null, "Refresh token invalide.");
+        }
+
+        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            logger.LogWarning("Refresh token expiré pour UserId {UserId}", request.UserId);
+            return (false, null, "Refresh token expiré, veuillez vous reconnecter.");
+        }
+
+        var tokens = await GenerateTokensAsync(user);
+        return (true, tokens, null);
     }
 }

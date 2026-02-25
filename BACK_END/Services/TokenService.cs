@@ -1,78 +1,74 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Portfolio.Entities;
+
 namespace Portfolio.Services;
 
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
-using Portfolio.Models;
-using Microsoft.AspNetCore.Identity;
-using Portfolio.Enums;
-
-public class TokenService(ILogger<TokenService> logger, IConfiguration configuration)
+public class TokenService(ILogger<TokenService> logger, IConfiguration configuration, UserManager<ApplicationUser> userManager)
 {
-  private const int ExpirationMinutes = 30;
-  private readonly ILogger<TokenService> _logger = logger;
+  private const int ExpirationMinutes = 60;
 
-  public string CreateToken(ApplicationUser user)
+  public async Task<string> CreateTokenAsync(ApplicationUser user)
   {
+    var claims = await BuildClaimsAsync(user);
+    var credentials = CreateSigningCredentials();
     var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
-    var token = CreateJwtToken(
-        CreateClaims(user),
-        CreateSigningCredentials(),
-        expiration
-    );
-    var tokenHandler = new JwtSecurityTokenHandler();
 
-    _logger.LogInformation("JWT Token créé");
-
-    return tokenHandler.WriteToken(token);
-  }
-
-  private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials,
-      DateTime expiration) =>
-      new(
-        configuration.GetValue<string>("AppSettings:Issuer"),
-        configuration.GetValue<string>("AppSettings:Audience"),
-        claims,
+    var token = new JwtSecurityToken(
+        issuer: configuration["AppSettings:Issuer"],
+        audience: configuration["AppSettings:Audience"],
+        claims: claims,
         expires: expiration,
         signingCredentials: credentials
-      );
+    );
 
-  private List<Claim> CreateClaims(ApplicationUser user)
+    var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+    logger.LogInformation("✅ JWT créé pour {Email}, expire à {Expiration}", user.Email, expiration);
+
+    return tokenString;
+  }
+
+  private async Task<List<Claim>> BuildClaimsAsync(ApplicationUser user)
   {
-    // var jwtSub = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["JwtRegisteredClaimNamesSub"];
+    var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Name, user.UserName!),
+            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.Role, user.Role.ToString())
+        };
 
-    try
+    var identityRoles = await userManager.GetRolesAsync(user);
+    foreach (var role in identityRoles)
     {
-      var claims = new List<Claim>
-            {
-                // new Claim(JwtRegisteredClaimNames.Sub, jwtSub),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
+      if (!claims.Any(c => c.Type == ClaimTypes.Role && c.Value == role))
+      {
+        claims.Add(new Claim(ClaimTypes.Role, role));
+      }
+    }
 
-      return claims;
-    }
-    catch (Exception e)
-    {
-      Console.WriteLine(e);
-      throw;
-    }
+    return claims;
   }
 
   private SigningCredentials CreateSigningCredentials()
   {
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
-
-    // var symmetricSecurityKey = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("JwtTokenSettings")["SymmetricSecurityKey"];
-
-    return new SigningCredentials(
-        key,
-        SecurityAlgorithms.HmacSha256
+    var key = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]!)
     );
+    return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+  }
+
+  public string GenerateRefreshToken()
+  {
+    var randomNumber = new byte[32];
+    using var rng = RandomNumberGenerator.Create();
+    rng.GetBytes(randomNumber);
+    return Convert.ToBase64String(randomNumber);
   }
 }

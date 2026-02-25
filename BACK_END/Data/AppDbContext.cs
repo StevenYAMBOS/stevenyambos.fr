@@ -1,16 +1,13 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Entities;
-using Portfolio.Models;
 
 namespace Portfolio.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
-        : IdentityDbContext<ApplicationUser>(options)
+    : IdentityDbContext<ApplicationUser>(options)
 {
-  // public DbSet<User> Users { get; set; }
   public DbSet<Article> Articles { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
@@ -19,11 +16,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     builder.Entity<ApplicationUser>(entity =>
     {
-      entity.ToTable(name: "users");
+      entity.ToTable("users");
+      // Pour stocker le rôle en string lisible ("Admin", "User")
+      entity.Property(u => u.Role)
+                .HasConversion<string>();
     });
+
     builder.Entity<IdentityRole>(entity =>
     {
-      entity.ToTable(name: "roles");
+      entity.ToTable("roles");
     });
   }
 }

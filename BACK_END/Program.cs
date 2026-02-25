@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Portfolio.Data;
-using Portfolio.Models;
+using Portfolio.Entities;
 using Portfolio.Repositories;
 using Portfolio.Services;
 
@@ -101,11 +101,11 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
         });
 });
-/* builder.Services.AddAuthorization(options =>
+builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
     options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-}); */
+});
 
 var app = builder.Build();
 
@@ -114,11 +114,11 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-/* using (var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleHelper.EnsureRolesCreated(roleManager);
-} */
+}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
