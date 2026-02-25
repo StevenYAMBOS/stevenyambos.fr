@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using Portfolio.Models;
+using Microsoft.AspNetCore.Identity;
+using Portfolio.Enums;
 
 public class TokenService(ILogger<TokenService> logger, IConfiguration configuration)
 {
@@ -48,8 +50,8 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.UserName!),
+                new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 

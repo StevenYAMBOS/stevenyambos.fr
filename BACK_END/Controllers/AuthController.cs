@@ -7,16 +7,22 @@ using Portfolio.Services;
 using Microsoft.AspNetCore.Identity;
 using Portfolio.Enums;
 using Portfolio.Data;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Portfolio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController(
-        ApplicationDbContext context,
-         UserManager<ApplicationUser> userManager,
+        AppDbContext context,
+         UserManager<IdentityUser> userManager,
+         RoleManager<ApplicationUser> roleManager,
+         SignInManager<IdentityUser> signInManager,
          TokenService tokenService,
-         SignInManager<ApplicationUser> signInManager,
+         IConfiguration configuration,
          //  AuthService authService,
          ILogger<Program> log
          ) : ControllerBase
@@ -24,55 +30,53 @@ namespace Portfolio.Controllers
         public static User user = new User();
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterRequest request)
+        public async Task<ActionResult> Register([FromBody] RegisterRequest request)
         {
+            try
+            {
+                // Instantiate a identity user that is needed to authenticate
+                // using the data from InboundUser
+                var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
 
-            var user = new ApplicationUser
-            {
-                UserName = request.Email,
-                Email = request.Email,
-            };
-            var result = await userManager.CreateAsync(user, request.Password);
-            if (result.Succeeded)
-            {
-                // Assign default role
-                await userManager.AddToRoleAsync(user, "Admin");
-                return Ok(new { message = "Registration successful" });
+                // Here, we search if a role of type "User" already exists
+                // The role will define which type of user has the token and
+                // its permissions
+                bool userRoleExists = await roleManager.RoleExistsAsync(Role.User.ToString());
+
+                // In case of role of type User doesn't exists, create one
+                if (!userRoleExists)
+                {
+                    await roleManager.CreateAsync(new ApplicationUser { Role = Role.User });
+                }
+
+                // Now, we create the user
+                var result = await userManager.CreateAsync(user, request.Password);
+                // And set the role of "User" to it
+                await userManager.AddToRoleAsync(user, Role.User.ToString());
+
+                var errors = result.Errors.Select(e => e.Description);
+                // In case of success, build the token
+                // Otherwise, just return the errors
+                if (result.Succeeded)
+                {
+                    var token = tokenService.CreateToken(user);
+                    if (token == null)
+                    {
+                        return BadRequest("Email or password invalid!");
+                    }
+                    return Ok(token);
+                }
+                else
+                {
+                    return BadRequest(errors);
+                }
             }
-            return BadRequest(result.Errors);
-
-            /*             try
-                        {
-                            var user = await authService.RegisterAsync(request);
-                            if (user is null)
-                            {
-                                log.LogWarning("Utilisateur déjà existant : {0}", request.Username);
-                                return Conflict("Un utilisateur avec ce nom existe déjà.");
-                            }
-
-                            log.LogInformation("Utilisateur '{0}' créé avec succès.", request.Username);
-                            return CreatedAtAction(nameof(Register), new { id = user.Id }, user);
-                        }
-                        catch (Exception ex)
-                        {
-                            log.LogError(ex, "Erreur lors de la création de l'utilisateur '{0}'.", request.Username);
-                            return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur interne est survenue.");
-                        } */
-
-            /*
-                         var result = await userManager.CreateAsync(
-                            new ApplicationUser { UserName = request.Username, Email = request.Email, Role = Role.User },
-                            request.Password!
-                        );
-
-                        if (result.Succeeded)
-                        {
-                            request.Password = "";
-                            return CreatedAtAction(nameof(Register), new { email = request.Email, role = request.Role }, request);
-                        }
-
-                        return Ok(result); */
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login([FromBody] UserDTO request)
@@ -107,6 +111,45 @@ namespace Portfolio.Controllers
             });
         }
 
+        private async Task<string> BuildToken(RegisterRequest request, Role[] roleTypes)
+        {
+            var user = await userManager.FindByEmailAsync(request.Email);
+            if (user == null) return null;
+
+            var claims = new List<Claim>() {
+              new Claim(JwtRegisteredClaimNames.Email, request.Email),
+              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            foreach (var role in roleTypes)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+            }
+
+            var userRoles = await userManager.GetRolesAsync(user);
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiration = DateTime.UtcNow.AddHours(1);
+            JwtSecurityToken token = new JwtSecurityToken(
+               issuer: null,
+               audience: null,
+               claims: claims,
+               expires: expiration,
+               signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+
+        }
+
         /*         [HttpPost("refresh-token")]
                 public async Task<ActionResult<TokenResponseDTO>> RefreshToken(RefreshTokenRequestDTO request)
                 {
@@ -130,8 +173,8 @@ namespace Portfolio.Controllers
             return Ok("You are authenticated!");
         }
 
-        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(Role.Admin))]
         public IActionResult AdminOnly()
         {
             Console.WriteLine("✅ UTILISATEUR ADMIN : {0} à {1}", User.Identity?.Name, DateTime.Now);

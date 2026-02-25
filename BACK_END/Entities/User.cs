@@ -16,7 +16,7 @@ public class User
   [Column("password")]
   public string Password { get; set; } = string.Empty;
   [Column("role")]
-  public Role Role { get; set; }
+  public string? Role { get; set; }
   [Column("refresh_token")]
   public string? RefreshToken { get; set; }
   [Column("refresh_token_expiry_time")]

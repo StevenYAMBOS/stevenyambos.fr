@@ -13,7 +13,7 @@ using Portfolio.Enums;
 
 namespace Portfolio.Services
 {
-    public class AuthService(ApplicationDbContext context, IConfiguration configuration, UserManager<ApplicationUser> userManager) : IAuthService
+    public class AuthService(AppDbContext context, IConfiguration configuration, UserManager<ApplicationUser> userManager) : IAuthService
     {
         public async Task<ApplicationUser?> RegisterAsync(RegisterRequest request)
         {

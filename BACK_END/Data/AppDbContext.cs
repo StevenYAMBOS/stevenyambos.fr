@@ -7,7 +7,7 @@ using Portfolio.Models;
 
 namespace Portfolio.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+public class AppDbContext(DbContextOptions<AppDbContext> options)
         : IdentityDbContext<ApplicationUser>(options)
 {
   // public DbSet<User> Users { get; set; }
@@ -27,15 +27,3 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     });
   }
 }
-
-/* public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityUserContext<ApplicationUser>(options)
-
-{
-  // public DbSet<User> Users { get; set; }
-  public DbSet<Article> Articles { get; set; }
-
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
-  {
-    base.OnModelCreating(modelBuilder);
-  }
-} */

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Portfolio.Enums;
 
@@ -14,6 +15,7 @@ public record class UserDTO
 
 public class RegisterRequest
 {
+  [EmailAddress]
   [Required]
   public string? Email { get; set; }
 
@@ -21,16 +23,21 @@ public class RegisterRequest
   public string? Username { get; set; }
 
   [Required]
+  [PasswordPropertyText]
   public string? Password { get; set; }
 
-  public Role Role { get; set; }
+  // public string? Role { get; set; }
 };
 
 
 
 public class LoginRequest
 {
+  [Required]
+  [EmailAddress]
   public string? Email { get; set; }
+  [Required]
+  [PasswordPropertyText]
   public string? Password { get; set; }
 }
 

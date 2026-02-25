@@ -9,7 +9,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-    public class ArticleService(ApplicationDbContext context, IFileService fileService) : IArticleService
+    public class ArticleService(AppDbContext context, IFileService fileService) : IArticleService
     {
         private static string GenerateSlug(string title)
         {
