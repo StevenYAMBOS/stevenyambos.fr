@@ -19,18 +19,18 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 // Variables d'environnements
-var jwtSecret = builder.Configuration["AppSettings:Token"];
+var jwtSecret = builder.Configuration["AppSettings:Token"]!;
 var key = Encoding.ASCII.GetBytes(jwtSecret);
-var issuer = builder.Configuration["AppSettings:Issuer"];
-var audience = builder.Configuration["AppSettings:Audience"];
-var dbConfig = builder.Configuration["ConnectionStrings:DefaultConnection"];
-var cloudflareApiToken = builder.Configuration["Cloudflare:ApiToken"];
-var cloudflareAccountId = builder.Configuration["Cloudflare:AccountId"];
-var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"];
-var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"];
-var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"];
-var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"];
-var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"];
+var issuer = builder.Configuration["AppSettings:Issuer"]!;
+var audience = builder.Configuration["AppSettings:Audience"]!;
+var dbConfig = builder.Configuration["ConnectionStrings:DefaultConnection"]!;
+var cloudflareApiToken = builder.Configuration["Cloudflare:ApiToken"]!;
+var cloudflareAccountId = builder.Configuration["Cloudflare:AccountId"]!;
+var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"]!;
+var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"]!;
+var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"]!;
+var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"]!;
+var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"]!;
 
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>

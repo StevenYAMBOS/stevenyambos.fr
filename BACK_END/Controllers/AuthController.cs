@@ -61,7 +61,6 @@ namespace Portfolio.Controllers
             return Ok(tokens);
         }
 
-
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult AuthenticatedOnly()
