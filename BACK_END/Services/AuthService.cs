@@ -3,6 +3,7 @@ using Portfolio.Models;
 using Microsoft.AspNetCore.Identity;
 using Portfolio.Repositories;
 using Portfolio.Enums;
+using Newtonsoft.Json;
 
 namespace Portfolio.Services;
 
@@ -61,6 +62,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         var tokens = await GenerateTokensAsync(user);
 
+        Console.WriteLine("{0}", JsonConvert.SerializeObject(tokens, Formatting.Indented));
         return (true, tokens, null);
     }
 

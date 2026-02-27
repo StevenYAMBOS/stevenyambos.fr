@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Repositories;
@@ -18,7 +19,43 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "stevenyambos.fr API",
+        Description = "API du site internet `stevenyambos.fr`.",
+        Contact = new OpenApiContact
+        {
+            Name = "Développeur (Steven YAMBOS)",
+            Url = new Uri("https://www.linkedin.com/in/steven-yambos/")
+        },
+        Version = "v1"
+    });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Entrer un JWT valide",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 // Variables d'environnements
 var jwtSecret = builder.Configuration["AppSettings:Token"]!;
@@ -101,11 +138,11 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
         });
 });
-builder.Services.AddAuthorization(options =>
+/* builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
     options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-});
+}); */
 
 var app = builder.Build();
 
