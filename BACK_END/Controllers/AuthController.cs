@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Portfolio.Enums;
 using Portfolio.Models;
 using Portfolio.Repositories;
@@ -7,6 +8,7 @@ using Portfolio.Repositories;
 namespace Portfolio.Controllers
 {
     [Route("api/[controller]")]
+    [EnableRateLimiting("fixed")]
     [ApiController]
     public class AuthController(
         IAuthService authService,

@@ -4,6 +4,7 @@ using Cloudflare.NET.Core;
 using Cloudflare.NET.R2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -138,11 +139,16 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
         });
 });
-/* builder.Services.AddAuthorization(options =>
+
+builder.Services.AddRateLimiter(options =>
 {
-    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-}); */
+    options.AddFixedWindowLimiter("fixed", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromSeconds(10);
+        limiterOptions.QueueLimit = 0;
+    });
+});
 
 var app = builder.Build();
 
@@ -158,6 +164,7 @@ using (var scope = app.Services.CreateScope())
     await RoleHelper.EnsureRolesCreated(roleManager);
 }
 
+app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.MapControllers();

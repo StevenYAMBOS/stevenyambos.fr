@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cloudflare.NET.R2;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Portfolio.Services;
 
 namespace Portfolio.Controllers
@@ -15,6 +16,7 @@ namespace Portfolio.Controllers
     {
 
         [HttpGet]
+        [EnableRateLimiting("fixed")]
         public string WelcomeMessage()
         {
             var message = "Page test";

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.RateLimiting;
 using Portfolio.Entities;
 using Portfolio.Models;
 using Portfolio.Repositories;
@@ -14,9 +15,11 @@ namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ArticleController(IFileService fileService, IArticleService articleService, ILogger<Program> log) : ControllerBase
+public class ArticleController(IArticleService articleService, ILogger<Program> log) : ControllerBase
 {
   [HttpPost]
+  [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
   public async Task<IActionResult> CreateArticle([FromForm] ArticleDTO request)
   {
     if (request.Cover?.Length > 1 * 1024 * 1024)
@@ -65,6 +68,7 @@ public class ArticleController(IFileService fileService, IArticleService article
 
   [HttpPut("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
   public async Task<IActionResult> UpdateArticle(Guid id, [FromForm] UpdateArticleDTO request)
   {
     if (request.NewCoverFile?.Length > 1 * 1024 * 1024)
@@ -90,6 +94,7 @@ public class ArticleController(IFileService fileService, IArticleService article
 
   [HttpDelete("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
   public async Task<IActionResult> DeleteOneArticle(Guid id)
   {
     try
