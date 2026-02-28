@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<ApplicationUser>(options)
 {
   public DbSet<Article> Articles { get; set; }
+  public DbSet<Contact> Contacts { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
