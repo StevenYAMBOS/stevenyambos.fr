@@ -15,6 +15,7 @@ public class ContactController(IContactService contactService, ILogger<Program> 
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> SendContactForm([FromForm] SendContactInfoDTO request)
   {
+    Console.WriteLine("✅ Requête reçu : {0} !", request.Email);
     if (request.File?.Length > 1 * 1024 * 1024)
     {
       return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excéder 1MB.");
@@ -22,18 +23,21 @@ public class ContactController(IContactService contactService, ILogger<Program> 
 
     try
     {
-      var contactInfos = await contactService.SendContactInfoAsync(request);
-      if (contactInfos is null)
+      var formrequest = await contactService.SendContactInfoAsync(request);
+      if (formrequest is null)
       {
+        Console.WriteLine("Erreur lors de l'envoie du formulaire : {Subject}", request.Subject);
         log.LogWarning("Erreur lors de l'envoie du formulaire : {Subject}", request.Subject);
         return Conflict("Erreur lors de l'envoie du formulaire.");
       }
 
+      Console.WriteLine("Formulaire envoyé avec succès.");
       log.LogInformation("Formulaire envoyé avec succès.");
-      return CreatedAtAction(nameof(SendContactForm), new { id = contactInfos.Id }, contactInfos);
+      return CreatedAtAction(nameof(SendContactForm), new { id = formrequest.Id }, formrequest);
     }
     catch (Exception ex)
     {
+      Console.WriteLine("Erreur lors de l'envoi du formulaire '{Subject}'.", request.Subject);
       log.LogError(ex, "Erreur lors de l'envoi du formulaire '{Subject}'.", request.Subject);
       return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur interne est survenue.");
     }
@@ -43,13 +47,13 @@ public class ContactController(IContactService contactService, ILogger<Program> 
     [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(Role.Admin))]
     public async Task<IActionResult> GetOneArticle(Guid id)
     {
-      var contactInfos = await contactService.FindArticleByIdAsync(id);
-      if (contactInfos == null)
+      var formrequest = await contactService.FindArticleByIdAsync(id);
+      if (formrequest == null)
       {
-        log.LogInformation("contactInfos avec l'id : `{id}` introuvable", id);
-        return StatusCode(StatusCodes.Status404NotFound, "contactInfos introuvable");
+        log.LogInformation("formrequest avec l'id : `{id}` introuvable", id);
+        return StatusCode(StatusCodes.Status404NotFound, "formrequest introuvable");
       }
-      return Ok(contactInfos);
+      return Ok(formrequest);
     }
 
     [HttpGet()]
