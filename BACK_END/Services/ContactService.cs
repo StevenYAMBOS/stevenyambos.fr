@@ -34,7 +34,7 @@ public class ContactService(AppDbContext context, IFileService fileService) : IC
     Console.WriteLine("REQUÊTE EMAIL : {0}", request.Email);
     Console.WriteLine("REQUÊTE SUBJECT : {0}", request.Subject);
     Console.WriteLine("REQUÊTE CONTENT : {0}", request.Content);
-    Console.WriteLine("REQUÊTE FILE : {0}", request?.File);
+    Console.WriteLine("REQUÊTE FILE : {0}", fileUrl);
 
     context.Contacts.Add(contact);
     await context.SaveChangesAsync();

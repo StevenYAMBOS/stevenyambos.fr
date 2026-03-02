@@ -26,7 +26,7 @@ public class Contact
   [MaxLength(1000)]
   public string? Content { get; set; }
 
-  [Column("file", TypeName = "varchar(100)")]
+  [Column("file", TypeName = "varchar(200)")]
   [MaxLength(200)]
   public string? File { get; set; }
 
