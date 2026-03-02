@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.Entities;
 
-[Table("contact")]
+[Table("contacts")]
 public class Contact
 {
   [Column("id")]
   public Guid Id { get; set; }
 
-  [Column("email")]
+  [Column("email", TypeName = "varchar(100)")]
   [Required]
   [MaxLength(200)]
   [EmailAddress]
@@ -26,7 +26,7 @@ public class Contact
   [MaxLength(1000)]
   public string? Content { get; set; }
 
-  [Column("file")]
+  [Column("file", TypeName = "varchar(100)")]
   [MaxLength(200)]
   public string? File { get; set; }
 
