@@ -9,13 +9,12 @@ namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ContactController(IContactService contactService, ILogger<Program> log) : ControllerBase
+public class ContactController(IContactService contactService, ILogger<ContactController> log) : ControllerBase
 {
   [HttpPost]
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> SendContactForm([FromForm] SendContactInfoDTO request)
   {
-    Console.WriteLine("✅ Requête reçu : {0} !", request.Email);
     if (request.File?.Length > 1 * 1024 * 1024)
     {
       return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excéder 1MB.");
@@ -43,26 +42,26 @@ public class ContactController(IContactService contactService, ILogger<Program> 
     }
   }
 
-  /*   [HttpGet("{id}")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(Role.Admin))]
-    public async Task<IActionResult> GetOneArticle(Guid id)
+  [HttpGet("{id}")]
+  [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(Role.Admin))]
+  public async Task<IActionResult> GetContact(Guid id)
+  {
+    var contact = await contactService.FindContactByIdAsync(id);
+    if (contact == null)
     {
-      var formrequest = await contactService.FindArticleByIdAsync(id);
-      if (formrequest == null)
-      {
-        log.LogInformation("formrequest avec l'id : `{id}` introuvable", id);
-        return StatusCode(StatusCodes.Status404NotFound, "formrequest introuvable");
-      }
-      return Ok(formrequest);
+      log.LogInformation("Demande avec l'id : `{id}` introuvable", id);
+      return StatusCode(StatusCodes.Status404NotFound, "contact introuvable");
     }
+    return Ok(contact);
+  }
 
-    [HttpGet()]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(Role.Admin))]
-    public async Task<IActionResult> GetAllArticles()
-    {
-      var articles = await contactService.GetArticlesAsync();
-      return Ok(articles);
-    }
-   */
+  [HttpGet("all")]
+  [Authorize(AuthenticationSchemes = "Bearer", Roles = nameof(Role.Admin))]
+  public async Task<IActionResult> GetAllContacts()
+  {
+    var contacts = await contactService.GetContactsAsync();
+    return Ok(contacts);
+  }
+
 }
 
