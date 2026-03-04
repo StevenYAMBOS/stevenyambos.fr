@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.RateLimiting;
-using Portfolio.Entities;
+using Portfolio.Data;
 using Portfolio.Models;
 using Portfolio.Repositories;
-using Portfolio.Services;
 
 namespace Portfolio.Controllers;
 
@@ -91,7 +85,6 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
       return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
     }
   }
-
   [HttpDelete("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]

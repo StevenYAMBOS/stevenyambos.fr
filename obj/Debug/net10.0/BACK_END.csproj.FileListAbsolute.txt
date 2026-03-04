@@ -664,3 +664,7 @@
 /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/obj/Debug/net10.0/BACK_END.csproj.Up2Date
 /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/obj/Debug/net10.0/BACK_END.genruntimeconfig.cache
 /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/obj/Debug/net10.0/ref/BACK_END.dll
+/home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.JsonPatch.dll
+/home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.JsonPatch.SystemTextJson.dll
+/home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+/home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Newtonsoft.Json.Bson.dll

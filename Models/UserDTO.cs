@@ -17,8 +17,6 @@ public class RegisterRequest
   public string? Password { get; set; }
 };
 
-
-
 public class LoginRequest
 {
   [Required]
@@ -34,4 +32,12 @@ public class AuthResponse
   public string? Username { get; set; }
   public string? Email { get; set; }
   public string? Token { get; set; }
+}
+
+public class UpdateProfilDTO
+{
+  public string? Id { get; set; }
+  [EmailAddress]
+  public string? Email { get; set; }
+  public string? Username { get; set; }
 }
