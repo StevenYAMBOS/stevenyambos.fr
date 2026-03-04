@@ -62,7 +62,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         var tokens = await GenerateTokensAsync(user);
 
-        Console.WriteLine("{0}", JsonConvert.SerializeObject(tokens, Formatting.Indented));
+        // Console.WriteLine("{0}", JsonConvert.SerializeObject(tokens, Formatting.Indented));
         return (true, tokens, null);
     }
 

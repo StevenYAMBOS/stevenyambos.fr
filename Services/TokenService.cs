@@ -27,8 +27,6 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
     );
 
     var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-    logger.LogInformation("✅ JWT créé pour {Email}, expire à {Expiration}", user.Email, expiration);
-
     return tokenString;
   }
 

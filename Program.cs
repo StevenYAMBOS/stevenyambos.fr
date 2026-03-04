@@ -12,6 +12,7 @@ using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Repositories;
 using Portfolio.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
 
 // Variables d'environnements
 var jwtSecret = builder.Configuration["AppSettings:Token"]!;
@@ -169,6 +171,7 @@ app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.MapControllers();
+app.UseSerilogRequestLogging();
 app.UseCors();
 
 app.Run();

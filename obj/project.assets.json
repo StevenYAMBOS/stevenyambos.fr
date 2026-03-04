@@ -5986,6 +5986,7 @@
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 10.0.0",
       "Serilog.AspNetCore >= 10.0.0",
       "Serilog.Sinks.Console >= 6.1.1",
+      "Serilog.Sinks.Debug >= 3.0.0",
       "Serilog.Sinks.File >= 7.0.0",
       "Swashbuckle.AspNetCore >= 6.6.2"
     ]
@@ -6117,6 +6118,10 @@
           "Serilog.Sinks.Console": {
             "target": "Package",
             "version": "[6.1.1, )"
+          },
+          "Serilog.Sinks.Debug": {
+            "target": "Package",
+            "version": "[3.0.0, )"
           },
           "Serilog.Sinks.File": {
             "target": "Package",
