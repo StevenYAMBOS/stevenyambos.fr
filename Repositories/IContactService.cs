@@ -9,4 +9,6 @@ public interface IContactService
   Task<Contact> SendContactInfoAsync(SendContactInfoDTO request);
   Task<Contact?> FindContactByIdAsync(Guid contactId);
   Task<IEnumerable<Contact>> GetContactsAsync();
+  Task DeleteContatAsync(Guid contactId);
+
 }

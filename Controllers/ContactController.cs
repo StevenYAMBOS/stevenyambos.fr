@@ -63,5 +63,23 @@ public class ContactController(IContactService contactService, ILogger<ContactCo
     return Ok(contacts);
   }
 
+
+  [HttpDelete("{id}")]
+  [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
+  public async Task<IActionResult> DeleteOneContact(Guid id)
+  {
+    try
+    {
+      log.LogInformation("Article '{0}' supprimé avec succès.", id);
+      await contactService.DeleteContatAsync(id);
+      return NoContent();
+    }
+    catch (KeyNotFoundException)
+    {
+      StatusCode(StatusCodes.Status500InternalServerError);
+      return NotFound();
+    }
+  }
 }
 

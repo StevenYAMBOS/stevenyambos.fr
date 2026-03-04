@@ -50,4 +50,18 @@ public class ContactService(AppDbContext context, IFileService fileService, ILog
     logger.LogInformation("LISTE DES DEMANDES : {@0}", contacts);
     return contacts;
   }
+
+  public async Task DeleteContatAsync(Guid contactId)
+  {
+    var contact = await FindContactByIdAsync(contactId);
+    if (contact == null)
+      throw new KeyNotFoundException("Demande non trouvée");
+    else
+    {
+      logger.LogInformation("Fichier {@0} supprimée avec succès.", contact.File);
+      await fileService.DeleteFileAsync(contact.File.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
+      context.Contacts.Remove(contact);
+      await context.SaveChangesAsync();
+    }
+  }
 }
