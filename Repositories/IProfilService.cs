@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Portfolio.Entities;
-using Portfolio.Models;
 
 namespace Portfolio.Repositories;
 

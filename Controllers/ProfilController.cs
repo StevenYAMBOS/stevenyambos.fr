@@ -18,16 +18,36 @@ public class ProfilController(AppDbContext context, IProfilService profilService
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> UpdateProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
   {
-    if (id == null)
+    if (patchDocument == null)
     {
-      logger.LogError("ID manquant : {@0}", id);
+      return BadRequest();
+    }
+    var existingUser = await profilService.UpdateProfilAsync(id, patchDocument);
+    if (existingUser == null)
+    {
       return NotFound();
     }
+    patchDocument.ApplyTo(existingUser, ModelState);
 
-    var updatedUser = await profilService.UpdateProfilAsync(id, patchDocument);
+    if (!TryValidateModel(existingUser))
+    {
+      return BadRequest(ModelState);
+    }
+    context.Users.Update(existingUser);
+    await context.SaveChangesAsync();
 
-    logger.LogWarning("Profil utilisateur mis à jour : {0}", updatedUser);
-    return Ok(updatedUser);
+    return Ok(existingUser);
+    /*     logger.LogInformation("Requête : {@0}", patchDocument);
+        if (id == null)
+        {
+          logger.LogError("ID manquant : {@0}", id);
+          return NotFound();
+        }
+
+        var updatedUser = await profilService.UpdateProfilAsync(id, patchDocument);
+
+        logger.LogWarning("Profil utilisateur mis à jour : {0}", updatedUser);
+        return Ok(updatedUser); */
     /*     logger.LogInformation("Requête : {@0}", patchDocument);
         if (patchDocument == null)
         {
