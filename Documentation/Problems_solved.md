@@ -19,6 +19,7 @@ Doc officiel : [Microsoft](https://learn.microsoft.com/en-us/aspnet/core/securit
 Liens utiles :
 
 - [Tuto YouTube](https://www.youtube.com/watch?v=RuvG5C8axw8)
+- [Tuto YouTube 2](https://www.youtube.com/watch?v=W_UyPtF6q4g)
 - [Doc officiel (gestion de la réponse)](https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-10.0#apply-a-json-patch-document-to-an-object)
 - [Blog](https://dotnettutorials.net/lesson/http-patch-method-in-asp-net-core-web-api/)
 

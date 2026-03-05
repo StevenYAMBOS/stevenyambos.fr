@@ -11,54 +11,64 @@ namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProfilController(AppDbContext context, IProfilService profilService, ILogger<ProfilController> log) : ControllerBase
+public class ProfilController(AppDbContext context, IProfilService profilService, ILogger<ProfilController> logger) : ControllerBase
 {
   [HttpPatch("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
-  public async Task<IActionResult> UpdateProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDoc)
+  public async Task<IActionResult> UpdateProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
   {
-    log.LogInformation("Requête : {@0}", patchDoc);
-    if (patchDoc == null)
+    if (id == null)
     {
-    log.LogInformation("PatchDoc est nul : {@0}", patchDoc);
-      return BadRequest();
-    }
-
-    var existingUser = context.Users.FirstOrDefault(user => user.Id == id);
-    if (existingUser == null)
-    {
-    log.LogInformation("ID manquant : {@0}", id);
+      logger.LogError("ID manquant : {@0}", id);
       return NotFound();
     }
 
-    patchDoc.ApplyTo(existingUser);
-    log.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
-    return Ok(existingUser);
+    var updatedUser = await profilService.UpdateProfilAsync(id, patchDocument);
+
+    logger.LogWarning("Profil utilisateur mis à jour : {0}", updatedUser);
+    return Ok(updatedUser);
+    /*     logger.LogInformation("Requête : {@0}", patchDocument);
+        if (patchDocument == null)
+        {
+          logger.LogError("patchDocument est nul : {@0}", patchDocument);
+          return BadRequest();
+        }
+
+        var existingUser = context.Users.FirstOrDefault(user => user.Id == id);
+        if (existingUser == null)
+        {
+          logger.LogInformation("ID manquant : {@0}", id);
+          return NotFound();
+        }
+
+        patchDocument.ApplyTo(existingUser);
+        logger.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
+        return Ok(existingUser); */
   }
 
 
-/*   [HttpPut()]
-  [Authorize(AuthenticationSchemes = "Bearer")]
-  [EnableRateLimiting("fixed")]
-  public async Task<IActionResult> UpdateProfil([FromBody] UpdateProfilDTO request)
-  {
-    try
+  /*   [HttpPut()]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [EnableRateLimiting("fixed")]
+    public async Task<IActionResult> UpdateProfil([FromBody] UpdateProfilDTO request)
     {
-      if (request.Id == null)
+      try
       {
-        log.LogError("[CONTROLLEUR] Id introuvable : {@0}");
-        return StatusCode(StatusCodes.Status400BadRequest, $"Id introuvable.");
+        if (request.Id == null)
+        {
+          log.LogError("[CONTROLLEUR] Id introuvable : {@0}");
+          return StatusCode(StatusCodes.Status400BadRequest, $"Id introuvable.");
+        }
+        await profilService.UpdateProfilAsync(request);
+        log.LogInformation("[CONTROLLEUR] Informations utilisateur : {@0}", request);
+        return Ok(request);
       }
-      await profilService.UpdateProfilAsync(request);
-      log.LogInformation("[CONTROLLEUR] Informations utilisateur : {@0}", request);
-      return Ok(request);
-    }
-    catch (Exception ex)
-    {
-      log.LogError(ex.Message);
-      return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-    }
-  } */
+      catch (Exception ex)
+      {
+        log.LogError(ex.Message);
+        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+      }
+    } */
 }
 
