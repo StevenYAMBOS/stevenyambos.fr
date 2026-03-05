@@ -17,19 +17,30 @@ namespace Portfolio.Services
       return user;
     }
 
-    public async Task<ApplicationUser> UpdateProfilAsync(string id, JsonPatchDocument<ApplicationUser> patchDocument)
+    public async Task<(bool Success, ApplicationUser? User, string? Error)> UpdateProfilAsync(string id, JsonPatchDocument<ApplicationUser> patchDocument)
     {
-      var existingUser = context.Users.FirstOrDefault(user => user.Id == id);
-      if (existingUser == null)
+      try
       {
-        logger.LogWarning("Erreur lors de la mise à jour de l'utilisateur.");
-        return null;
+        var existingUser = context.Users.FirstOrDefault(user => user.Id == id);
+        if (existingUser == null)
+        {
+          logger.LogWarning("Erreur lors de la mise à jour de l'utilisateur.");
+          return (false, null, "Erreur lors de la mise à jour de l'utilisateur.");
+        }
+
+        logger.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
+        patchDocument.ApplyTo(existingUser);
+
+        context.Users.Update(existingUser);
+        await context.SaveChangesAsync();
+
+        return (true, existingUser, null);
       }
-
-      logger.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
-      patchDocument.ApplyTo(existingUser);
-
-      return existingUser;
+      catch (Exception ex)
+      {
+        logger.LogInformation("Erreur : {@0}", ex);
+        throw new InvalidOperationException("Une erreur est survenue lors de la mise à jour de l'utilisateur.", ex);
+      }
     }
 
     public async Task DeleteProfilAsync(string id)
