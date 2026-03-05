@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Portfolio.Data;
+using Portfolio.Entities;
 using Portfolio.Models;
 using Portfolio.Repositories;
 
@@ -9,9 +11,31 @@ namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProfilController(IProfilService profilService, ILogger<ProfilController> log) : ControllerBase
+public class ProfilController(AppDbContext context, IProfilService profilService, ILogger<ProfilController> log) : ControllerBase
 {
-  [HttpPut()]
+  [HttpPatch("{id}")]
+  [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
+  public async Task<IActionResult> UpdateProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDoc)
+  {
+    log.LogInformation("Requête : {@0}", patchDoc);
+    if (patchDoc == null)
+    {
+    log.LogInformation("PatchDoc est nul : {@0}", patchDoc);
+      return BadRequest();
+    }
+
+    var existingUser = context.Users.FirstOrDefault(user => user.Id == id);
+    if (existingUser == null)
+    {
+    log.LogInformation("ID manquant : {@0}", id);
+      return NotFound();
+    }
+
+    log.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
+    return Ok(existingUser);
+  }
+/*   [HttpPut()]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> UpdateProfil([FromBody] UpdateProfilDTO request)
@@ -32,6 +56,6 @@ public class ProfilController(IProfilService profilService, ILogger<ProfilContro
       log.LogError(ex.Message);
       return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
     }
-  }
+  } */
 }
 

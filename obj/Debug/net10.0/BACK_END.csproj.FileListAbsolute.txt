@@ -668,3 +668,7 @@
 /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.JsonPatch.SystemTextJson.dll
 /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 /home/steven/Documents/PROGRAMMATION/C#/stevenyambos.fr/bin/Debug/net10.0/Newtonsoft.Json.Bson.dll
+/home/stevenyambos/CODE/Csharp/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.JsonPatch.dll
+/home/stevenyambos/CODE/Csharp/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.JsonPatch.SystemTextJson.dll
+/home/stevenyambos/CODE/Csharp/stevenyambos.fr/bin/Debug/net10.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+/home/stevenyambos/CODE/Csharp/stevenyambos.fr/bin/Debug/net10.0/Newtonsoft.Json.Bson.dll
