@@ -32,9 +32,15 @@ public class ProfilController(AppDbContext context, IProfilService profilService
       return NotFound();
     }
 
+  // ⚠️ EN GROS : Ajouter l'appel en base de données mon ami !
+  patchDoc.ApplyTo(existingUser);
+/*     context.Users.Update(existingUser);
+    await context.SaveChangesAsync(); */
     log.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
     return Ok(existingUser);
   }
+
+
 /*   [HttpPut()]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
