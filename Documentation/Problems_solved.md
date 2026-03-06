@@ -67,4 +67,16 @@ PATCH
 "Content-Type":"application/json-patch+json"
 ```
 
-####
+#### Format réponse
+
+[Blog](https://andrewhalil.com/2020/12/13/handling-http-patch-requests-in-a-net-core-web-api/)
+
+```json
+[
+  {
+    "op": "replace", // type d'opération : `replace`, `add`, `remove`, `move`
+    "path": "/username",
+    "value": "StevenYAMBOS"
+  }
+]
+```

@@ -69,4 +69,58 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
     rng.GetBytes(randomNumber);
     return Convert.ToBase64String(randomNumber);
   }
+
+  public async Task<string> GetJwtTokenFromRequest(HttpContext context)
+  {
+    var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+    if (string.IsNullOrEmpty(authHeader))
+    {
+      //no authorization header
+      return null;
+    }
+    if (!authHeader.StartsWith("Bearer "))
+    {
+      //no bearer but authorization header returned
+      return authHeader;
+    }
+    //bearer present, returning trimmed value
+    logger.LogInformation("[GetJwtTokenFromRequest] AuthHeader : {@0}", authHeader);
+    return authHeader.Substring("Bearer ".Length).Trim();
+
+  }
+
+  public async Task<string> GetInformationFromToken(HttpContext context, string dataProp)
+  {
+    var token = await GetJwtTokenFromRequest(context);
+    logger.LogInformation("[GetInformationFromToken] Token : {@0}", token);
+    if (string.IsNullOrEmpty(token))
+    {
+      //token is empty, returning null
+      return null;
+    }
+    try
+    {
+      var tokenHandler = new JwtSecurityTokenHandler();
+      tokenHandler.ValidateToken(token, new TokenValidationParameters
+      {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = false,
+        ValidateAudience = false
+      }, out SecurityToken validatedToken);
+      var jwtToken = (JwtSecurityToken)validatedToken;
+      //the JwtSecurityToken contains a property "Claims" from which you extract a data property that you want to read
+      var targetInfo = jwtToken.Claims.FirstOrDefault(claim => claim.Type == dataProp);
+      if (targetInfo != null)
+      {
+        return targetInfo.Value;
+      }
+      return null;
+    }
+    catch (Exception e)
+    {
+      // Token validation failed
+      return null;
+    }
+  }
+
 }
