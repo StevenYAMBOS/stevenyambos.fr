@@ -9,7 +9,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-  public class ProfilService(AppDbContext context, ILogger<ProfilService> logger) : IProfilService
+  public class ProfilService(AppDbContext context, ILogger<ProfilService> logger) : IUserProfileService
   {
     public async Task<ApplicationUser?> FindUserByIdAsync(string id)
     {

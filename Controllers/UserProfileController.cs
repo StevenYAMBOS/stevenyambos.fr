@@ -9,8 +9,8 @@ using Portfolio.Repositories;
 namespace Portfolio.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class ProfilController(IProfilService profilService, ILogger<ProfilController> logger) : ControllerBase
+[Route("api/user/profile")]
+public class UserProfileController(IUserProfileService userProfilService, ILogger<UserProfileController> logger) : ControllerBase
 {
   [HttpPatch("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
@@ -23,7 +23,7 @@ public class ProfilController(IProfilService profilService, ILogger<ProfilContro
       return BadRequest();
     }
 
-    var (success, existingUser, error) = await profilService.UpdateProfilAsync(id, patchDocument);
+    var (success, existingUser, error) = await userProfilService.UpdateProfilAsync(id, patchDocument);
 
     if (!success)
     {
@@ -33,6 +33,24 @@ public class ProfilController(IProfilService profilService, ILogger<ProfilContro
 
     logger.LogInformation("Utilisateur mis à jour avec succès : {@0}", existingUser);
     return Ok(existingUser);
+  }
+
+  [HttpDelete("{id}")]
+  [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
+  public async Task<IActionResult> DeleteUserProfile(string id)
+  {
+    try
+    {
+      logger.LogInformation("Utilisateur '{0}' supprimé avec succès.", id);
+      await userProfilService.DeleteProfilAsync(id);
+      return NoContent();
+    }
+    catch (KeyNotFoundException)
+    {
+      StatusCode(StatusCodes.Status500InternalServerError);
+      return NotFound();
+    }
   }
 }
 

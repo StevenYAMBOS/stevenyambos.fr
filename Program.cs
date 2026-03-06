@@ -116,7 +116,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<TokenService, TokenService>();
-builder.Services.AddScoped<IProfilService, ProfilService>();
+builder.Services.AddScoped<IUserProfileService, ProfilService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
