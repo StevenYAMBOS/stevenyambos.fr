@@ -8,7 +8,7 @@ namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ArticleController(IArticleService articleService, ILogger<Program> log) : ControllerBase
+public class ArticleController(IArticleService articleService, ILogger<Program> logger) : ControllerBase
 {
   [HttpPost]
   [Authorize(AuthenticationSchemes = "Bearer")]
@@ -25,16 +25,16 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
       var article = await articleService.CreateArticleAsync(request);
       if (article is null)
       {
-        log.LogWarning("Article déjà existant : {Title}", request.Title);
+        logger.LogWarning("Article déjà existant : {Title}", request.Title);
         return Conflict("Un article avec ce titre existe déjà.");
       }
 
-      log.LogInformation("Article '{Title}' créé avec succès.", request.Title);
+      logger.LogInformation("Article '{Title}' créé avec succès.", request.Title);
       return CreatedAtAction(nameof(CreateArticle), new { id = article.Id }, article);
     }
     catch (Exception ex)
     {
-      log.LogError(ex, "Erreur lors de la création de l'article '{Title}'.", request.Title);
+      logger.LogError(ex, "Erreur lors de la création de l'article '{Title}'.", request.Title);
       return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur interne est survenue.");
     }
   }
@@ -45,7 +45,7 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
     var article = await articleService.FindArticleByIdAsync(id);
     if (article == null)
     {
-      log.LogInformation("Article avec l'id : `{id}` introuvable", id);
+      logger.LogInformation("Article avec l'id : `{id}` introuvable", id);
       return StatusCode(StatusCodes.Status404NotFound, "Article introuvable");
     }
     return Ok(article);
@@ -59,20 +59,22 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
     return Ok(articles);
   }
 
-  [HttpPut("{id}")]
+  [HttpPatch("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> UpdateArticle(Guid id, [FromForm] UpdateArticleDTO request)
   {
     if (request.NewCoverFile?.Length > 1 * 1024 * 1024)
     {
+      logger.LogError("La taille du fichier ne doit pas excéder 1MB.");
       return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excéder 1MB.");
     }
     try
     {
       if (id != request.Id)
       {
-        return StatusCode(StatusCodes.Status400BadRequest, $"Les `id` du `body` et de la requête ne correspondent pas pour cette article");
+        logger.LogError("ERREUR : Les id ne correspondent pas.\n ID requête : {@0}\n Id article BDD : {@1}", id, request.Id);
+        return StatusCode(StatusCodes.Status400BadRequest, $"Les id de la requête ne correspondent pas.");
       }
       await articleService.UpdateArticleAsync(id, request);
       return Ok(request);
@@ -80,10 +82,11 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
     }
     catch (Exception ex)
     {
-      log.LogError(ex.Message);
+      logger.LogError(ex.Message);
       return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
     }
   }
+
   [HttpDelete("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
@@ -91,7 +94,7 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
   {
     try
     {
-      log.LogInformation("Article '{0}' supprimé avec succès.", id);
+      logger.LogInformation("Article '{0}' supprimé avec succès.", id);
       await articleService.DeleteArticleAsync(id);
       return NoContent();
     }

@@ -23,7 +23,6 @@ Liens utiles :
 - [Doc officiel (gestion de la réponse)](https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-10.0#apply-a-json-patch-document-to-an-object)
 - [Blog](https://dotnettutorials.net/lesson/http-patch-method-in-asp-net-core-web-api/)
 
-
 ### En gros
 
 Installer ces 2 libs : `JsonPatch` et `NewtonsoftJson` ([ici](https://www.nuget.org/packages/Microsoft.AspNetCore.JsonPatch/))
@@ -54,4 +53,18 @@ Puis ajouter `ApplyTo()` à la requête :
 patchDoc.ApplyTo(existingUser);
 ```
 
+### Tester le endpoint
 
+#### HTTP Request
+
+```shell
+PATCH
+```
+
+#### Header
+
+```json
+"Content-Type":"application/json-patch+json"
+```
+
+####

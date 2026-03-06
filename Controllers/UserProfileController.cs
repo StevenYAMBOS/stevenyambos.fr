@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Repositories;
 
@@ -15,7 +14,7 @@ public class UserProfileController(IUserProfileService userProfilService, ILogge
   [HttpPatch("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
-  public async Task<IActionResult> UpdateProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
+  public async Task<IActionResult> UpdateUserProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
   {
     if (patchDocument == null)
     {
