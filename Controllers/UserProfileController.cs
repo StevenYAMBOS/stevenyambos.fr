@@ -21,23 +21,23 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
   public async Task<IActionResult> GetUserProfil()
   {
 
-    /*     var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-        if (dataExtractedFromJwt == null)
-        {
-          logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
-          return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
-        } */
+    var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (dataExtractedFromJwt == null)
+    {
+      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+      return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
+    }
 
-    // logger.LogError("TOKEN  : {@0}", dataExtractedFromJwt);
+    logger.LogInformation("TOKEN décodé : {@0}", dataExtractedFromJwt);
 
-    var handler = new JwtSecurityTokenHandler();
-    string authHeader = Request.Headers.Authorization;
-    authHeader = authHeader.Replace("Bearer ", "");
-    var jsonToken = handler.ReadToken(authHeader);
-    var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-    var id = tokenS.Claims.First(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+    // var handler = new JwtSecurityTokenHandler();
+    // string authHeader = Request.Headers.Authorization;
+    // authHeader = authHeader.Replace("Bearer ", "");
+    // var jsonToken = handler.ReadToken(authHeader);
+    // var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+    // var id = tokenS.Claims.First(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
 
-    var user = await userProfilService.FindUserByIdAsync(id);
+    var user = await userProfilService.FindUserByIdAsync(dataExtractedFromJwt);
     if (user == null)
     {
       logger.LogError("Utilisateur introuvable.");

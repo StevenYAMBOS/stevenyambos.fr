@@ -70,7 +70,7 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
     return Convert.ToBase64String(randomNumber);
   }
 
-  public async Task<string> GetJwtTokenFromRequest(HttpContext context)
+  public async Task<string?> GetJwtTokenFromRequest(HttpContext context)
   {
     var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
     if (string.IsNullOrEmpty(authHeader))
@@ -88,7 +88,7 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
 
   }
 
-  public async Task<string> GetInformationFromToken(HttpContext context, string dataProp)
+  public async Task<string?> GetInformationFromToken(HttpContext context, string dataProp)
   {
     var token = await GetJwtTokenFromRequest(context);
     if (string.IsNullOrEmpty(token))
@@ -99,15 +99,9 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
     try
     {
       var tokenHandler = new JwtSecurityTokenHandler();
-      tokenHandler.ValidateToken(token, new TokenValidationParameters
-      {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = false,
-        ValidateAudience = false
-      }, out SecurityToken validatedToken);
-      var jwtToken = (JwtSecurityToken)validatedToken;
+      var tokenS = tokenHandler.ReadToken(token) as JwtSecurityToken;
       //the JwtSecurityToken contains a property "Claims" from which you extract a data property that you want to read
-      var targetInfo = jwtToken.Claims.FirstOrDefault(claim => claim.Type == dataProp);
+      var targetInfo = tokenS!.Claims.FirstOrDefault(claim => claim.Type == dataProp);
       if (targetInfo != null)
       {
         return targetInfo.Value;
