@@ -15,31 +15,37 @@ namespace Portfolio.Controllers;
 [Route("api/user/profile")]
 public class UserProfileController(TokenService tokenService, IUserProfileService userProfilService, ILogger<UserProfileController> logger) : ControllerBase
 {
-
   [HttpGet()]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> GetUserProfil()
   {
 
-    /*     var dataExtractedFromJwt = await tokenService.GetInformationFromToken(context, "Id");
+    /*     var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
         if (dataExtractedFromJwt == null)
         {
-          logger.LogError("Informations token utilisateur : {@0}", dataExtractedFromJwt);
-          return StatusCode(StatusCodes.Status404NotFound, "Article introuvable");
+          logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+          return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
         } */
 
+    // logger.LogError("TOKEN  : {@0}", dataExtractedFromJwt);
+
     var handler = new JwtSecurityTokenHandler();
-    string authHeader = Request.Headers["Authorization"];
+    string authHeader = Request.Headers.Authorization;
     authHeader = authHeader.Replace("Bearer ", "");
-    // logger.LogError("Informations authHeader : {@0}", authHeader);
     var jsonToken = handler.ReadToken(authHeader);
     var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-    logger.LogError("Informations tokenS : {@0}", JsonConvert.SerializeObject(tokenS.Claims.FirstOrDefault(claim => claim.Type == "Value"), Formatting.Indented));
-    var id = tokenS.Claims.First(claim => claim.Type == "Id").Value;
-    logger.LogError("Informations token utilisateur : {@0}", id);
+    var id = tokenS.Claims.First(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
 
-    return Ok(id);
+    var user = await userProfilService.FindUserByIdAsync(id);
+    if (user == null)
+    {
+      logger.LogError("Utilisateur introuvable.");
+      return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
+    }
+
+    logger.LogInformation("Informations utilisateur : {@0}", user);
+    return Ok(user);
   }
 
 

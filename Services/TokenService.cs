@@ -84,7 +84,6 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
       return authHeader;
     }
     //bearer present, returning trimmed value
-    logger.LogInformation("[GetJwtTokenFromRequest] AuthHeader : {@0}", authHeader);
     return authHeader.Substring("Bearer ".Length).Trim();
 
   }
@@ -92,7 +91,6 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
   public async Task<string> GetInformationFromToken(HttpContext context, string dataProp)
   {
     var token = await GetJwtTokenFromRequest(context);
-    logger.LogInformation("[GetInformationFromToken] Token : {@0}", token);
     if (string.IsNullOrEmpty(token))
     {
       //token is empty, returning null
