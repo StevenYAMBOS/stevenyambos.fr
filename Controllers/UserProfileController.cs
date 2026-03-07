@@ -52,7 +52,7 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
   [HttpPatch()]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
-  public async Task<IActionResult> UpdateUserProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
+  public async Task<IActionResult> UpdateUserProfil([FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
   {
     if (patchDocument == null)
     {
@@ -60,7 +60,14 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
       return BadRequest();
     }
 
-    var (success, existingUser, error) = await userProfilService.UpdateProfilAsync(id, patchDocument);
+    var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (dataExtractedFromJwt == null)
+    {
+      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+      return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
+    }
+
+    var (success, existingUser, error) = await userProfilService.UpdateProfilAsync(dataExtractedFromJwt, patchDocument);
 
     if (!success)
     {
@@ -72,15 +79,22 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
     return Ok(existingUser);
   }
 
-  [HttpDelete("{id}")]
+  [HttpDelete()]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
-  public async Task<IActionResult> DeleteUserProfile(string id)
+  public async Task<IActionResult> DeleteUserProfile()
   {
+    var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (dataExtractedFromJwt == null)
+    {
+      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+      return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
+    }
+
     try
     {
-      logger.LogInformation("Utilisateur '{0}' supprimé avec succès.", id);
-      await userProfilService.DeleteProfilAsync(id);
+      logger.LogInformation("Utilisateur '{0}' supprimé avec succès.", dataExtractedFromJwt);
+      await userProfilService.DeleteProfilAsync(dataExtractedFromJwt);
       return NoContent();
     }
     catch (KeyNotFoundException)
