@@ -80,3 +80,10 @@ PATCH
   }
 ]
 ```
+
+## Décoder le token JWT
+
+Pour extraire les infos du token JWT j'ai trouvé 2 solutions qui sont pas mal :
+
+- [Blog Medium](https://jeremie-litzler.medium.com/getting-information-from-jwt-token-in-c-db04c7806115) pour la structure
+- [Stack Overflow (regarder la solution de SolarBear)](https://stackoverflow.com/questions/38340078/how-to-decode-jwt-token) pour une logique plus "brute" mais fonctionnelle directement dans le contrôleur

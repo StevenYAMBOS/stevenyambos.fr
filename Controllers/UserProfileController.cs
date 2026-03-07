@@ -49,7 +49,7 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
   }
 
 
-  [HttpPatch("{id}")]
+  [HttpPatch()]
   [Authorize(AuthenticationSchemes = "Bearer")]
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> UpdateUserProfil(string id, [FromBody] JsonPatchDocument<ApplicationUser> patchDocument)
