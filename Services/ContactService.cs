@@ -59,7 +59,7 @@ public class ContactService(AppDbContext context, IFileService fileService, ILog
     else
     {
       logger.LogInformation("Fichier {@0} supprimée avec succès.", contact.File);
-      await fileService.DeleteFileAsync(contact.File.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
+      await fileService.DeleteFileAsync(contact?.File.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
       context.Contacts.Remove(contact);
       await context.SaveChangesAsync();
     }

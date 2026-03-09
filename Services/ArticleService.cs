@@ -32,7 +32,7 @@ namespace Portfolio.Services
             return articles;
         }
 
-        public async Task<Article> CreateArticleAsync(ArticleDTO request)
+        public async Task<Article?> CreateArticleAsync(ArticleDTO request)
         {
             if (await context.Articles.AnyAsync(a => a.Title == request.Title))
             {
@@ -128,7 +128,7 @@ namespace Portfolio.Services
                 throw new KeyNotFoundException("Article non trouvé");
             else
             {
-                await fileService.DeleteFileAsync(article.Cover.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
+                await fileService.DeleteFileAsync(article?.Cover.Replace("https://pub-56d2c024e16e477e9fe29e4b168d78ec.r2.dev/", ""));
                 context.Articles.Remove(article);
                 await context.SaveChangesAsync();
             }
