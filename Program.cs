@@ -13,8 +13,11 @@ using Portfolio.Entities;
 using Portfolio.Repositories;
 using Portfolio.Services;
 using Serilog;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -61,18 +64,29 @@ builder.Services.AddSwaggerGen(option =>
 builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
 
 // Variables d'environnements
-var jwtSecret = builder.Configuration["AppSettings:Token"]!;
-var key = Encoding.ASCII.GetBytes(jwtSecret);
-var issuer = builder.Configuration["AppSettings:Issuer"]!;
-var audience = builder.Configuration["AppSettings:Audience"]!;
-var dbConfig = builder.Configuration["ConnectionStrings:DefaultConnection"]!;
-var cloudflareApiToken = builder.Configuration["Cloudflare:ApiToken"]!;
-var cloudflareAccountId = builder.Configuration["Cloudflare:AccountId"]!;
-var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"]!;
-var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"]!;
-var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"]!;
-var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"]!;
-var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"]!;
+// var jwtSecret = builder.Configuration["AppSettings:Token"]!;
+// var issuer = builder.Configuration["AppSettings:Issuer"]!;
+// var audience = builder.Configuration["AppSettings:Audience"]!;
+// var dbConfig = builder.Configuration["ConnectionStrings:DefaultConnection"]!;
+// var cloudflareApiToken = builder.Configuration["Cloudflare:ApiToken"]!;
+// var cloudflareAccountId = builder.Configuration["Cloudflare:AccountId"]!;
+// var cloudflareAccessKeyId = builder.Configuration["Cloudflare:AccessKeyId"]!;
+// var cloudflareSecretAccessKey = builder.Configuration["Cloudflare:SecretAccessKey"]!;
+// var cloudflareApiEndpoint = builder.Configuration["Cloudflare:JuridictionDefault"]!;
+// var cloudflareEndpointUrl = builder.Configuration["R2:EndpointUrl"]!;
+// var cloudflareEndpointPublicUrl = builder.Configuration["R2:PublicUrl"]!;
+var jwtSecret = Environment.GetEnvironmentVariable("AppSettingsToken");
+var key = Encoding.ASCII.GetBytes(jwtSecret!);
+var issuer = Environment.GetEnvironmentVariable("AppSettingsIssuer");
+var audience = Environment.GetEnvironmentVariable("AppSettingsAudience");
+var dbConfig = Environment.GetEnvironmentVariable("ConnectionStringsDefaultConnection");
+var cloudflareApiToken = Environment.GetEnvironmentVariable("CloudflareApiToken");
+var cloudflareAccountId = Environment.GetEnvironmentVariable("CloudflareAccountId");
+var cloudflareAccessKeyId = Environment.GetEnvironmentVariable("CloudflareAccessKeyId");
+var cloudflareSecretAccessKey = Environment.GetEnvironmentVariable("CloudflareSecretAccessKey");
+var cloudflareApiEndpoint = Environment.GetEnvironmentVariable("CloudflareJuridictionDefault");
+var cloudflareEndpointUrl = Environment.GetEnvironmentVariable("R2EndpointUrl");
+var cloudflareEndpointPublicUrl = Environment.GetEnvironmentVariable("R2PublicUrl");
 
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>

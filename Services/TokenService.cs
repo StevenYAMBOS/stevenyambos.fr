@@ -19,8 +19,10 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
     var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
 
     var token = new JwtSecurityToken(
-        issuer: configuration["AppSettings:Issuer"],
-        audience: configuration["AppSettings:Audience"],
+        // issuer: configuration["AppSettings:Issuer"],
+        // audience: configuration["AppSettings:Audience"],
+        issuer: Environment.GetEnvironmentVariable("AppSettingsIssuer"),
+        audience: Environment.GetEnvironmentVariable("AppSettingsAudience"),
         claims: claims,
         expires: expiration,
         signingCredentials: credentials
@@ -57,8 +59,11 @@ public class TokenService(ILogger<TokenService> logger, IConfiguration configura
   private SigningCredentials CreateSigningCredentials()
   {
     var key = new SymmetricSecurityKey(
-        Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]!)
-    );
+    Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("AppSettingsToken"))
+);
+    // var key = new SymmetricSecurityKey(
+    //     Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]!)
+    // );
     return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
   }
 
