@@ -49,3 +49,7 @@ package-lock.json
 package.json
 
 .env
+
+bin/
+published/
+obj/
