@@ -1,14 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /App
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
-WORKDIR /app
-EXPOSE 80
-COPY ["BACK_END.csproj", "./"]
-RUN dotnet restore "./BACK_END.csproj"
+# Copy everything
 COPY . ./
-RUN dotnet build "BACK_END.csproj" -c Release -o /app/build
+# Restore as distinct layers
+RUN dotnet restore
+# Build and publish a release
+RUN dotnet publish -o publish
 
-FROM build AS publish
-RUN dotnet publish "BACK_END.csproj" -c Release -o /app/publish
-
-COPY --from=publish /app/publish .
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+WORKDIR /App
+COPY --from=build /App/publish .
 ENTRYPOINT ["dotnet", "BACK_END.dll"]
