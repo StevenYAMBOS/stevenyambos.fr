@@ -53,3 +53,4 @@ package.json
 bin/
 published/
 obj/
+Documentation/Notes.md

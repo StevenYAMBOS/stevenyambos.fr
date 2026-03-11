@@ -1,0 +1,22 @@
+name: API CI/CD
+
+on:
+  push:
+    branches: [ref]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "10.0"
+      - name: Restorer les dépendances
+        run: dotnet restore
+      - name: Build l'application
+        run: dotnet build --no-restore
