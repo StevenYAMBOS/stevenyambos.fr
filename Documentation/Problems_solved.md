@@ -87,3 +87,28 @@ Pour extraire les infos du token JWT j'ai trouvé 2 solutions qui sont pas mal :
 
 - [Blog Medium](https://jeremie-litzler.medium.com/getting-information-from-jwt-token-in-c-db04c7806115) pour la structure
 - [Stack Overflow (regarder la solution de SolarBear)](https://stackoverflow.com/questions/38340078/how-to-decode-jwt-token) pour une logique plus "brute" mais fonctionnelle directement dans le contrôleur
+
+## Port 8080 en production
+
+ASP.NET Core 8+ a changé son comportement par défaut : sans configuration explicite, l'application écoute sur `http://[::]:8080` en production. C'est le nouveau défaut des images Docker `mcr.microsoft.com/dotnet/aspnet`.
+
+La doc le spécifie [ici](https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/8.0/aspnet-port)
+
+```yaml
+# docker-compose.yml
+services:
+  stevenyambosfrapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080" # hôte:conteneur
+    env_file:
+      - ".env"
+    volumes:
+      - ~/.aspnet/https:/https:ro
+```
+
+On accède à l'API via `localhost:5000` → redirigé vers `8080` dans le conteneur.
+
+---
