@@ -1,10 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Newtonsoft.Json;
-using Portfolio.Data;
 using Portfolio.Entities;
 using Portfolio.Repositories;
 using Portfolio.Services;

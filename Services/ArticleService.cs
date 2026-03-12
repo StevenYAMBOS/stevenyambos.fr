@@ -1,6 +1,7 @@
 
 using System.Globalization;
 using System.Text;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Data;
 using Portfolio.Entities;
@@ -9,7 +10,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-    public class ArticleService(AppDbContext context, IFileService fileService) : IArticleService
+    public class ArticleService(AppDbContext context, IFileService fileService, ILogger<ArticleService> log) : IArticleService
     {
         private static string GenerateSlug(string title)
         {
@@ -28,7 +29,11 @@ namespace Portfolio.Services
 
         public async Task<IEnumerable<Article>> GetArticlesAsync()
         {
-            var articles = await context.Articles.ToListAsync();
+            var articles = await context.Articles
+            .FromSqlRaw("SELECT * FROM articles WHERE is_published=true ORDER BY created_at DESC")
+            .AsNoTracking()
+            .ToListAsync();
+            // var articles = await context.Articles.ToListAsync();
             return articles;
         }
 
@@ -57,6 +62,7 @@ namespace Portfolio.Services
                 Slug = slug,
                 Description = request.Description,
                 Content = request.Content,
+                IsPublished = false,
                 Cover = coverUrl,
                 Author = request.Author,
                 Categories = request.Categories,
@@ -120,6 +126,39 @@ namespace Portfolio.Services
                 throw new InvalidOperationException("Une erreur est survenue lors de la mise à jour de l'article.", ex);
             }
         }
+        public async Task<Article> TogglePublishArticleAsync(Guid articleId, bool isPublished, string authorIdFromToken)
+        {
+            try
+            {
+                var existingArticle = await FindArticleByIdAsync(articleId);
+                if (existingArticle == null)
+                {
+                    log.LogWarning("Article {ArticleId} non trouvé.", articleId);
+                    return null;
+                }
+
+                if (existingArticle.Author.ToString() != authorIdFromToken)
+                {
+                    log.LogWarning("Utilisateur {AuthorId} non autorisé à modifier l'article {ArticleId}.", authorIdFromToken, articleId);
+                    throw new UnauthorizedAccessException();
+                }
+
+                existingArticle.IsPublished = isPublished;
+                existingArticle.PublishedAt = isPublished ? DateTime.UtcNow : null;
+                existingArticle.UpdatedAt = DateTime.UtcNow;
+
+                context.Articles.Update(existingArticle);
+                await context.SaveChangesAsync();
+
+                log.LogInformation("Article {ArticleId} mis à jour. Statut de publication : {IsPublished}.", existingArticle.Id, existingArticle.IsPublished);
+                return existingArticle;
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Erreur lors de la mise à jour de l'article {ArticleId}.", articleId);
+                throw;
+            }
+        }
 
         public async Task DeleteArticleAsync(Guid articleId)
         {
@@ -133,5 +172,6 @@ namespace Portfolio.Services
                 await context.SaveChangesAsync();
             }
         }
+
     }
 }

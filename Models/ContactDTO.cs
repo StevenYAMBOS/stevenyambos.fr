@@ -1,5 +1,3 @@
-
-
 namespace Portfolio.Models;
 
 public class SendContactInfoDTO

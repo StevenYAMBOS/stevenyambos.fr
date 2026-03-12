@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Portfolio.Entities;
 using Portfolio.Models;
 using Portfolio.Repositories;
+using Portfolio.Services;
 
 namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ArticleController(IArticleService articleService, ILogger<Program> logger) : ControllerBase
+public class ArticleController(IArticleService articleService, TokenService tokenService, ILogger<Program> logger) : ControllerBase
 {
   [HttpPost]
   [Authorize(AuthenticationSchemes = "Bearer")]
@@ -52,7 +55,6 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
   }
 
   [HttpGet()]
-  [Authorize(AuthenticationSchemes = "Bearer")]
   public async Task<IActionResult> GetAllArticles()
   {
     var articles = await articleService.GetArticlesAsync();
@@ -86,6 +88,45 @@ public class ArticleController(IArticleService articleService, ILogger<Program> 
       return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
     }
   }
+
+  [HttpPatch("{id}/publish")]
+  [Authorize(AuthenticationSchemes = "Bearer")]
+  [EnableRateLimiting("fixed")]
+  public async Task<IActionResult> TogglePublishArticle(Guid id, [FromBody] TogglePublishArticleRequest request)
+  {
+    var authorIdFromToken = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (authorIdFromToken == null)
+    {
+      logger.LogError("Impossible de récupérer l'ID de l'utilisateur depuis le token JWT.");
+      return Unauthorized("Utilisateur non authentifié.");
+    }
+
+    logger.LogInformation("Tentative de mise à jour de l'article {ArticleId} par l'utilisateur {AuthorId}.", id, authorIdFromToken);
+
+    try
+    {
+      var article = await articleService.TogglePublishArticleAsync(id, request.IsPublished, authorIdFromToken);
+      if (article == null)
+      {
+        logger.LogWarning("Article {ArticleId} non trouvé ou utilisateur {AuthorId} non autorisé.", id, authorIdFromToken);
+        return NotFound("Article non trouvé ou accès refusé.");
+      }
+
+      logger.LogInformation("Article {ArticleId} mis à jour avec succès. Statut de publication : {IsPublished}.", article.Id, article.IsPublished);
+      return Ok(article);
+    }
+    catch (UnauthorizedAccessException)
+    {
+      logger.LogWarning("Utilisateur {AuthorId} non autorisé à modifier l'article {ArticleId}.", authorIdFromToken, id);
+      return Forbid("Vous n'êtes pas autorisé à modifier cet article.");
+    }
+    catch (Exception ex)
+    {
+      logger.LogError(ex, "Erreur lors de la mise à jour de l'article {ArticleId}.", id);
+      return StatusCode(StatusCodes.Status500InternalServerError, "Une erreur est survenue.");
+    }
+  }
+
 
   [HttpDelete("{id}")]
   [Authorize(AuthenticationSchemes = "Bearer")]
