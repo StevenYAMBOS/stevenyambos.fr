@@ -6,7 +6,8 @@ namespace Portfolio.Repositories
 {
     public interface IArticleService
     {
-        Task<IEnumerable<Article>> GetArticlesAsync();
+        Task<IEnumerable<Article>> GetAllPubishedArticlesAsync();
+        Task<IEnumerable<Article>> GetAllArticlesAsync();
         Task<Article?> FindArticleByIdAsync(Guid id);
         Task<Article?> CreateArticleAsync(ArticleDTO request);
         Task<Article> UpdateArticleAsync(Guid articleId, UpdateArticleDTO request);

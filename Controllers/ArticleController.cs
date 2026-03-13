@@ -55,9 +55,17 @@ public class ArticleController(IArticleService articleService, TokenService toke
   }
 
   [HttpGet()]
+  public async Task<IActionResult> GetAllPublishedArticles()
+  {
+    var articles = await articleService.GetAllPubishedArticlesAsync();
+    return Ok(articles);
+  }
+
+  [HttpGet("admin")]
+  [Authorize(AuthenticationSchemes = "Bearer")]
   public async Task<IActionResult> GetAllArticles()
   {
-    var articles = await articleService.GetArticlesAsync();
+    var articles = await articleService.GetAllArticlesAsync();
     return Ok(articles);
   }
 

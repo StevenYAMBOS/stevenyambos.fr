@@ -27,13 +27,19 @@ namespace Portfolio.Services
                 .Trim('-');
         }
 
-        public async Task<IEnumerable<Article>> GetArticlesAsync()
+        public async Task<IEnumerable<Article>> GetAllPubishedArticlesAsync()
         {
             var articles = await context.Articles
             .FromSqlRaw("SELECT * FROM articles WHERE is_published=true ORDER BY created_at DESC")
             .AsNoTracking()
             .ToListAsync();
             // var articles = await context.Articles.ToListAsync();
+            return articles;
+        }
+
+        public async Task<IEnumerable<Article>> GetAllArticlesAsync()
+        {
+            var articles = await context.Articles.ToListAsync();
             return articles;
         }
 
@@ -126,6 +132,7 @@ namespace Portfolio.Services
                 throw new InvalidOperationException("Une erreur est survenue lors de la mise à jour de l'article.", ex);
             }
         }
+
         public async Task<Article> TogglePublishArticleAsync(Guid articleId, bool isPublished, string authorIdFromToken)
         {
             try
