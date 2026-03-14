@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Portfolio.Data;
@@ -12,9 +13,11 @@ using Portfolio.Data;
 namespace BACK_END.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260314185711_UpdateDDB")]
+    partial class UpdateDDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,7 +247,7 @@ namespace BACK_END.Migrations
 
                     b.Property<string>("AuthorId")
                         .HasColumnType("text")
-                        .HasColumnName("author_id");
+                        .HasColumnName("author");
 
                     b.PrimitiveCollection<List<string>>("Categories")
                         .IsRequired()
@@ -308,9 +311,12 @@ namespace BACK_END.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("view_count");
 
+                    b.Property<string>("articles")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("articles");
 
                     b.ToTable("articles");
                 });
@@ -352,6 +358,37 @@ namespace BACK_END.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("contacts");
+                });
+
+            modelBuilder.Entity("Portfolio.Entities.UserArticle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AID")
+                        .HasColumnType("text")
+                        .HasColumnName("article_id");
+
+                    b.Property<Guid?>("ArticleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("user_articles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -409,10 +446,24 @@ namespace BACK_END.Migrations
                 {
                     b.HasOne("Portfolio.Entities.ApplicationUser", "Author")
                         .WithMany("Articles")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("articles");
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Portfolio.Entities.UserArticle", b =>
+                {
+                    b.HasOne("Portfolio.Entities.Article", "Article")
+                        .WithMany()
+                        .HasForeignKey("ArticleId");
+
+                    b.HasOne("Portfolio.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Article");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Portfolio.Entities.ApplicationUser", b =>

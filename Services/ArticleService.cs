@@ -76,20 +76,21 @@ namespace Portfolio.Services
                 Cover = coverUrl,
                 Categories = request.Categories,
                 Tags = request.Tags,
+                AuthorId = user.Id,
                 PublishedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
-            var userArticle = new UserArticle
-            {
-                UserId = user.Id,
-                AID = articleId.ToString(),
-                CreatedAt = DateTime.UtcNow,
-            };
+            // var userArticle = new UserArticle
+            // {
+            //     UserId = user.Id,
+            //     AID = articleId.ToString(),
+            //     CreatedAt = DateTime.UtcNow,
+            // };
 
             context.Articles.Add(article);
-            context.UserArticleTable.Add(userArticle);
+            // context.UserArticleTable.Add(userArticle);
             await context.SaveChangesAsync();
 
             return article;

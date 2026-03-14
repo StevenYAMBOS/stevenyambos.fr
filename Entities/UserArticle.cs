@@ -14,12 +14,12 @@ public class UserArticle
     [ForeignKey("users")]
     [Column("user_id")]
     public string? UserId { get; set; }
-    public virtual ApplicationUser? User { get; set; }
+    public ApplicationUser? User { get; set; }
 
     [ForeignKey("articles")]
     [Column("article_id")]
     public string? AID { get; set; }
-    public virtual Article? Article { get; set; }
+    public Article? Article { get; set; }
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

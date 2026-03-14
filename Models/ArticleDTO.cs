@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Portfolio.Entities;
 
 namespace Portfolio.Models;
 
@@ -7,7 +8,7 @@ public record class ArticleDTO
 {
   public Guid Id { get; set; }
   public string Title { get; set; } = string.Empty;
-  public Guid Author { get; set; }
+  public string? AuthorId { get; set; }
   public string Slug { get; set; } = string.Empty;
   public string Description { get; set; } = string.Empty;
   public string Content { get; set; } = string.Empty;

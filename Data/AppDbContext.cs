@@ -10,7 +10,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
   public DbSet<Article> Articles { get; set; }
   public DbSet<Contact> Contacts { get; set; }
-  public DbSet<UserArticle> UserArticleTable { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
@@ -27,6 +26,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     builder.Entity<IdentityRole>(entity =>
     {
       entity.ToTable("roles");
+    });
+
+    builder.Entity<Article>(entity =>
+    {
+      entity.HasOne(a => a.Author)
+            .WithMany(u => u.Articles)
+            .HasForeignKey(a => a.AuthorId)
+            .OnDelete(DeleteBehavior.Cascade);
     });
   }
 }

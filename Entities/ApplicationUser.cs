@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Portfolio.Enums;
 
@@ -10,5 +11,6 @@ namespace Portfolio.Entities
         public DateTime? LastLogin { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public virtual ICollection<Article> Articles { get; set; } = [];
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Portfolio.Data;
@@ -12,9 +13,11 @@ using Portfolio.Data;
 namespace BACK_END.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260314192306_FixDDB")]
+    partial class FixDDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,9 +311,12 @@ namespace BACK_END.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("view_count");
 
+                    b.Property<string>("users")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("users");
 
                     b.ToTable("articles");
                 });
@@ -409,8 +415,7 @@ namespace BACK_END.Migrations
                 {
                     b.HasOne("Portfolio.Entities.ApplicationUser", "Author")
                         .WithMany("Articles")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("users");
 
                     b.Navigation("Author");
                 });

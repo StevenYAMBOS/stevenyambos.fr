@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Portfolio.Entities;
 
@@ -10,12 +11,12 @@ public class Article
   public Guid Id { get; set; }
 
   [Column("title")]
-  [Required]
+  [Required(ErrorMessage = "Ajouter un titre valide. Le titre ne doit pas dépasser 200 caractères.")]
   [MaxLength(200)]
   public string Title { get; set; } = string.Empty;
 
   [Column("slug")]
-  [Required]
+  [Required(ErrorMessage = "Format du slug invalide.")]
   [MaxLength(250)]
   public string Slug { get; set; } = string.Empty;
 
@@ -31,10 +32,9 @@ public class Article
   [MaxLength(500)]
   public string? Cover { get; set; }
 
-  // [ForeignKey("users")]
-  // [Column("author")]
-  // public string? AuthorId { get; set; }
-  // public virtual ApplicationUser? Author { get; set; }
+  [Column("author_id")]
+  public string? AuthorId { get; set; }
+  public virtual ApplicationUser? Author { get; set; }
 
   [Column("is_published")]
   public bool IsPublished { get; set; } = false;
