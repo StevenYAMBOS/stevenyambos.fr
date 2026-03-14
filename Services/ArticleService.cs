@@ -10,7 +10,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services
 {
-    public class ArticleService(AppDbContext context, IFileService fileService, ILogger<ArticleService> log) : IArticleService
+    public class ArticleService(AppDbContext context, IFileService fileService, IUserProfileService userService, ILogger<ArticleService> log) : IArticleService
     {
         private static string GenerateSlug(string title)
         {
@@ -45,12 +45,14 @@ namespace Portfolio.Services
             return articles;
         }
 
-        public async Task<Article?> CreateArticleAsync(ArticleDTO request)
+        public async Task<Article?> CreateArticleAsync(string userId, ArticleDTO request)
         {
             if (await context.Articles.AnyAsync(a => a.Title == request.Title))
             {
                 return null;
             }
+
+            var user = await userService.FindUserByIdAsync(userId) ?? throw new KeyNotFoundException("Utilisateur non trouvé");
 
             var articleId = Guid.NewGuid();
             string? coverUrl = null;
@@ -72,14 +74,22 @@ namespace Portfolio.Services
                 Content = request.Content,
                 IsPublished = false,
                 Cover = coverUrl,
-                Author = request.Author,
                 Categories = request.Categories,
                 Tags = request.Tags,
+                PublishedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
+            var userArticle = new UserArticle
+            {
+                UserId = user.Id,
+                AID = articleId.ToString(),
+                CreatedAt = DateTime.UtcNow,
+            };
+
             context.Articles.Add(article);
+            context.UserArticleTable.Add(userArticle);
             await context.SaveChangesAsync();
 
             return article;
@@ -146,11 +156,11 @@ namespace Portfolio.Services
                     return null;
                 }
 
-                if (existingArticle.Author.ToString() != authorIdFromToken)
-                {
-                    log.LogWarning("Utilisateur {AuthorId} non autorisé à modifier l'article {ArticleId}.", authorIdFromToken, articleId);
-                    throw new UnauthorizedAccessException();
-                }
+                // if (existingArticle.Author.ToString() != authorIdFromToken)
+                // {
+                //     log.LogWarning("Utilisateur {AuthorId} non autorisé à modifier l'article {ArticleId}.", authorIdFromToken, articleId);
+                //     throw new UnauthorizedAccessException();
+                // }
 
                 existingArticle.IsPublished = isPublished;
                 existingArticle.PublishedAt = isPublished ? DateTime.UtcNow : null;

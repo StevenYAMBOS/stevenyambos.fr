@@ -23,7 +23,6 @@ namespace BACK_END.Migrations
                     description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     content = table.Column<string>(type: "text", nullable: false),
                     cover = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    author = table.Column<Guid>(type: "uuid", nullable: false),
                     is_published = table.Column<bool>(type: "boolean", nullable: false),
                     published_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     categories = table.Column<List<string>>(type: "text[]", nullable: false),
@@ -36,6 +35,22 @@ namespace BACK_END.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_articles", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "contacts",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    email = table.Column<string>(type: "varchar(100)", maxLength: 200, nullable: false),
+                    subject = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    content = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    file = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_contacts", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,6 +203,31 @@ namespace BACK_END.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "user_articles",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<string>(type: "text", nullable: true),
+                    article_id = table.Column<string>(type: "text", nullable: true),
+                    ArticleId = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_articles", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_articles_articles_ArticleId",
+                        column: x => x.ArticleId,
+                        principalTable: "articles",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_user_articles_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -215,6 +255,16 @@ namespace BACK_END.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_articles_ArticleId",
+                table: "user_articles",
+                column: "ArticleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_articles_user_id",
+                table: "user_articles",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "users",
                 column: "NormalizedEmail");
@@ -229,9 +279,6 @@ namespace BACK_END.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "articles");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -248,7 +295,16 @@ namespace BACK_END.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "contacts");
+
+            migrationBuilder.DropTable(
+                name: "user_articles");
+
+            migrationBuilder.DropTable(
                 name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "articles");
 
             migrationBuilder.DropTable(
                 name: "users");

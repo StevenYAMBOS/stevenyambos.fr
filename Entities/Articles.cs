@@ -31,9 +31,10 @@ public class Article
   [MaxLength(500)]
   public string? Cover { get; set; }
 
-  [Column("author")]
-  [Required]
-  public Guid Author { get; set; }
+  // [ForeignKey("users")]
+  // [Column("author")]
+  // public string? AuthorId { get; set; }
+  // public virtual ApplicationUser? Author { get; set; }
 
   [Column("is_published")]
   public bool IsPublished { get; set; } = false;

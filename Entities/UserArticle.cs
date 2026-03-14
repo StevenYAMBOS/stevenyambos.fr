@@ -7,12 +7,19 @@ namespace Portfolio.Entities;
 [Table("user_articles")]
 public class UserArticle
 {
-    [Column("user_id")]
     [Key]
-    public Guid UserId { get; set; }
+    [Column("id")]
+    public Guid Id { get; set; }
 
+    [ForeignKey("users")]
+    [Column("user_id")]
+    public string? UserId { get; set; }
+    public virtual ApplicationUser? User { get; set; }
+
+    [ForeignKey("articles")]
     [Column("article_id")]
-    public Guid ArticleId { get; set; }
+    public string? AID { get; set; }
+    public virtual Article? Article { get; set; }
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

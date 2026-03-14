@@ -18,14 +18,14 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
   public async Task<IActionResult> GetUserProfil()
   {
 
-    var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-    if (dataExtractedFromJwt == null)
+    var idFromFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (idFromFromJwt == null)
     {
-      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", idFromFromJwt);
       return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
     }
 
-    logger.LogInformation("TOKEN décodé : {@0}", dataExtractedFromJwt);
+    logger.LogInformation("TOKEN décodé : {@0}", idFromFromJwt);
 
     // var handler = new JwtSecurityTokenHandler();
     // string authHeader = Request.Headers.Authorization;
@@ -34,7 +34,7 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
     // var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
     // var id = tokenS.Claims.First(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
 
-    var user = await userProfilService.FindUserByIdAsync(dataExtractedFromJwt);
+    var user = await userProfilService.FindUserByIdAsync(idFromFromJwt);
     if (user == null)
     {
       logger.LogError("Utilisateur introuvable.");
@@ -57,14 +57,14 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
       return BadRequest();
     }
 
-    var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-    if (dataExtractedFromJwt == null)
+    var idFromFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (idFromFromJwt == null)
     {
-      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", idFromFromJwt);
       return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
     }
 
-    var (success, existingUser, error) = await userProfilService.UpdateProfilAsync(dataExtractedFromJwt, patchDocument);
+    var (success, existingUser, error) = await userProfilService.UpdateProfilAsync(idFromFromJwt, patchDocument);
 
     if (!success)
     {
@@ -81,17 +81,17 @@ public class UserProfileController(TokenService tokenService, IUserProfileServic
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> DeleteUserProfile()
   {
-    var dataExtractedFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-    if (dataExtractedFromJwt == null)
+    var idFromFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (idFromFromJwt == null)
     {
-      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", dataExtractedFromJwt);
+      logger.LogError("Erreur lors de la récupération de l'utilisateur  : {@0}", idFromFromJwt);
       return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
     }
 
     try
     {
-      logger.LogInformation("Utilisateur '{0}' supprimé avec succès.", dataExtractedFromJwt);
-      await userProfilService.DeleteProfilAsync(dataExtractedFromJwt);
+      logger.LogInformation("Utilisateur '{0}' supprimé avec succès.", idFromFromJwt);
+      await userProfilService.DeleteProfilAsync(idFromFromJwt);
       return NoContent();
     }
     catch (KeyNotFoundException)

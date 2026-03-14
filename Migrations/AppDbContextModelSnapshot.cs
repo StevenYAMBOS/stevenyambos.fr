@@ -242,10 +242,6 @@ namespace BACK_END.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("Author")
-                        .HasColumnType("uuid")
-                        .HasColumnName("author");
-
                     b.PrimitiveCollection<List<string>>("Categories")
                         .IsRequired()
                         .HasColumnType("text[]")
@@ -354,20 +350,31 @@ namespace BACK_END.Migrations
 
             modelBuilder.Entity("Portfolio.Entities.UserArticle", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("id");
 
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("AID")
+                        .HasColumnType("text")
                         .HasColumnName("article_id");
+
+                    b.Property<Guid?>("ArticleId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.HasKey("UserId");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("user_articles");
                 });
@@ -421,6 +428,21 @@ namespace BACK_END.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Portfolio.Entities.UserArticle", b =>
+                {
+                    b.HasOne("Portfolio.Entities.Article", "Article")
+                        .WithMany()
+                        .HasForeignKey("ArticleId");
+
+                    b.HasOne("Portfolio.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Article");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

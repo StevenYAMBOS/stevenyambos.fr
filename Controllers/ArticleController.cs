@@ -18,6 +18,14 @@ public class ArticleController(IArticleService articleService, TokenService toke
   [EnableRateLimiting("fixed")]
   public async Task<IActionResult> CreateArticle([FromForm] ArticleDTO request)
   {
+
+    var userIdFromJwt = await tokenService.GetInformationFromToken(Request.HttpContext, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+    if (userIdFromJwt == null)
+    {
+      logger.LogError("Erreur lors de la récupération de l'`id` utilisateur  : {@0}", userIdFromJwt);
+      return StatusCode(StatusCodes.Status404NotFound, "Utilisateur introuvable");
+    }
+
     if (request.Cover?.Length > 1 * 1024 * 1024)
     {
       return StatusCode(StatusCodes.Status400BadRequest, "La taille du fichier ne doit pas excéder 1MB.");
@@ -25,7 +33,7 @@ public class ArticleController(IArticleService articleService, TokenService toke
 
     try
     {
-      var article = await articleService.CreateArticleAsync(request);
+      var article = await articleService.CreateArticleAsync(userIdFromJwt, request);
       if (article is null)
       {
         logger.LogWarning("Article déjà existant : {Title}", request.Title);
