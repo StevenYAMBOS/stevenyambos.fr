@@ -24,13 +24,15 @@ namespace Portfolio.Services
                 .Replace(" ", "-")
                 .Replace("'", "-")
                 .Replace("--", "-")
+                .Replace("?", "")
+                .Replace("!", "")
                 .Trim('-');
         }
 
         public async Task<IEnumerable<Article>> GetAllPubishedArticlesAsync()
         {
             var articles = await context.Articles
-            .FromSqlRaw("SELECT * FROM articles WHERE is_published=true ORDER BY created_at DESC")
+            .FromSqlRaw("SELECT * FROM articles WHERE is_published=true ORDER BY created_at ASC")
             .AsNoTracking()
             .ToListAsync();
             // var articles = await context.Articles.ToListAsync();

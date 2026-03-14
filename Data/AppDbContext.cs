@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
   public DbSet<Article> Articles { get; set; }
   public DbSet<Contact> Contacts { get; set; }
+  public DbSet<UserArticle> UserArticles { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
