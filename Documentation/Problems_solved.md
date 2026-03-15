@@ -152,4 +152,7 @@ public class Post
 }
 ```
 
-Documentation complète [ici](https://learn.microsoft.com/en-us/ef/core/modeling/relationships#mapping-relationships-in-ef-core).
+Documentation complète :
+
+- [ici](https://learn.microsoft.com/en-us/ef/core/modeling/relationships#mapping-relationships-in-ef-core)
+- [bonus](https://learn.microsoft.com/en-us/ef/core/saving/cascade-delete)

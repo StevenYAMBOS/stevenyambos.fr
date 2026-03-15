@@ -121,7 +121,7 @@ namespace Portfolio.Services
                 existingArticle.Cover = request.NewCoverFile != null ? request.Cover : existingArticle.Cover;
                 existingArticle.Id = existingArticle.Id;
                 existingArticle.Title = request.Title ?? existingArticle.Title;
-                existingArticle.Slug = request.Slug ?? existingArticle.Slug;
+                existingArticle.Slug = GenerateSlug(request?.Title) ?? existingArticle.Slug;
                 existingArticle.Description = request.Description ?? existingArticle.Description;
                 existingArticle.Content = request.Content ?? existingArticle.Content;
                 existingArticle.Categories = request.Categories ?? existingArticle.Categories;
