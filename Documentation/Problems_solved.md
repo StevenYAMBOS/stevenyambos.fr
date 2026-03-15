@@ -112,3 +112,44 @@ services:
 On accède à l'API via `localhost:5000` → redirigé vers `8080` dans le conteneur.
 
 ---
+
+## Clé étrangères (`foreign key`)
+
+Étapes :
+
+- Ajouter une clé primaire à chaque type d'entité.
+- Ajouter une clé étrangère à un type d'entité.
+- Associer les références entre les types d'entités à l'aide des clés primaires et étrangères afin de former une configuration de relation unique.
+
+À savoir :
+
+> Les propriétés de clé primaire et de clé étrangère ne doivent pas nécessairement être des propriétés visibles publiquement du type d'entité. Cependant, même lorsque ces propriétés sont masquées, il est important de garder à l'esprit qu'elles existent toujours dans le modèle EF.
+
+Exemple :
+
+```csharp
+public class Blog
+{
+    [Key] // Pas obligatoire sauf si EF le mentionne lors du build
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public virtual Uri SiteUri { get; set; }
+
+    public ICollection<Post> Posts { get; }
+}
+
+public class Post
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public DateTime PublishedOn { get; set; }
+    public bool Archived { get; set; }
+
+    [ForeignKey("post")] // Pas nécessaire
+    public int BlogId { get; set; }
+    public Blog Blog { get; set; }
+}
+```
+
+Documentation complète [ici](https://learn.microsoft.com/en-us/ef/core/modeling/relationships#mapping-relationships-in-ef-core).
