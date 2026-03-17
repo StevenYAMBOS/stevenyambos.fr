@@ -132,6 +132,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IUserProfileService, ProfilService>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConfig));
 builder.Services.AddCloudflareApiClient(options =>

@@ -8,7 +8,7 @@ using Portfolio.Repositories;
 
 namespace Portfolio.Services;
 
-public class ContactService(AppDbContext context, IFileService fileService, ILogger<ContactService> logger) : IContactService
+public class ContactService(AppDbContext context, IFileService fileService, IEmailService emailService, ILogger<ContactService> logger) : IContactService
 {
   public async Task<Contact> SendContactInfoAsync(SendContactInfoDTO request)
   {
@@ -30,6 +30,10 @@ public class ContactService(AppDbContext context, IFileService fileService, ILog
       File = fileUrl,
       CreatedAt = DateTime.UtcNow,
     };
+
+    await emailService.SendEmail(request?.Email, request?.Subject, request?.Content);
+    logger.LogInformation("Email envoyé !!!: {0}", request.Content);
+
 
     context.Contacts.Add(contact);
     await context.SaveChangesAsync();
