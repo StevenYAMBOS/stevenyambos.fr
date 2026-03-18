@@ -156,3 +156,15 @@ Documentation complète :
 
 - [ici](https://learn.microsoft.com/en-us/ef/core/modeling/relationships#mapping-relationships-in-ef-core)
 - [bonus](https://learn.microsoft.com/en-us/ef/core/saving/cascade-delete)
+
+## Email avec pièce jointe
+
+J'utilise `MailKit`.
+
+Envoyer des emails [sans pièce jointe](https://dev.to/mamun_akand/sending-emails-with-gmail-using-mailkit-in-net-web-api-4lj5)
+
+[Meilleure doc](https://www.aspsnippets.com/Articles/4222/ASPNet-Core-Send-Email-with-multiple-attachments-using-MailKit/)
+
+Bonus :
+
+- [Stack Overflow](https://stackoverflow.com/questions/37853903/can-i-send-files-via-email-using-mailkit)
