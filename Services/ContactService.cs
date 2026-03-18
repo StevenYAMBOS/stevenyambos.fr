@@ -31,8 +31,8 @@ public class ContactService(AppDbContext context, IFileService fileService, IEma
       CreatedAt = DateTime.UtcNow,
     };
 
-    await emailService.SendEmail(request?.Email, request?.Subject, request?.Content, request?.File.ToString());
-    logger.LogInformation("Email envoyé !!!: {0}", request.File);
+    await emailService.SendEmail(request?.Email, request?.Subject, request?.Content, request?.File);
+    logger.LogInformation("Email '{0}' envoyé avec succès : ", request.File);
 
 
     context.Contacts.Add(contact);

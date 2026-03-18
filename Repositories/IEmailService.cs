@@ -3,5 +3,5 @@ namespace Portfolio.Repositories;
 
 public interface IEmailService
 {
-    Task<string> SendEmail(string toEmail, string subject, string body, string path);
+    Task SendEmail(string sender, string subject, string body, IFormFile file);
 }
